@@ -139,12 +139,29 @@
   .legenda span{ display:inline-flex; align-items:center; gap:6px; }
   .legenda i{ width:10px; height:10px; border-radius:50%; display:inline-block; }
 
-  .selecionador-cidade{ margin-bottom:14px; }
-  .selecionador-cidade label{ font-size:.72rem; color:var(--texto-suave); display:block; margin-bottom:4px; }
-  .selecionador-cidade select{
-    border:1px solid #ddd6c4; border-radius:8px; padding:7px 10px; font-size:.85rem;
-    min-width:220px; background:#fff; color:var(--texto-escuro);
+  /* ---- filtro global: ANO | MÊS | CIDADE | REGIÃO ---- */
+  .filtro-global{ display:flex; gap:2px; margin-bottom:22px; position:relative; }
+  .filtro-segmento{ position:relative; flex:1; }
+  .filtro-segmento-grande{ flex:2; }
+  .filtro-btn{
+    width:100%; background:var(--laranja-forte); color:#fff; border:none;
+    padding:16px 20px; font-size:.85rem; font-weight:800; letter-spacing:1px;
+    text-transform:uppercase; text-align:center; cursor:pointer;
   }
+  .filtro-segmento:first-child .filtro-btn{ border-radius:10px 0 0 10px; }
+  .filtro-segmento:last-child .filtro-btn{ border-radius:0 10px 10px 0; }
+  .filtro-painel{
+    display:none; position:absolute; top:100%; left:0; right:0; z-index:30;
+    background:#fff; border:1px solid #e7e1d2; border-top:none; border-radius:0 0 10px 10px;
+    box-shadow:0 10px 24px rgba(0,0,0,.15); max-height:260px; overflow-y:auto; padding:6px 0;
+  }
+  .filtro-painel.aberto{ display:block; }
+  .filtro-item{
+    padding:9px 18px; font-size:.85rem; cursor:pointer; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis;
+  }
+  .filtro-item:hover{ background:#f4efe4; }
+  .filtro-item.todos{ font-weight:700; border-bottom:1px solid #e7e1d2; margin-bottom:4px; }
 
   #bullet-cidade{ max-width:280px; margin-bottom:32px; }
 
@@ -157,6 +174,15 @@
   .card-mini .nivel{ font-size:.72rem; font-weight:700; margin-top:6px; }
 
   .sem-dados{ font-size:.85rem; color:var(--texto-suave); font-style:italic; padding:10px 0; }
+
+  /* ---- alternador de agrupamento dos gráficos de chuva: CIDADE | REGIÃO ---- */
+  .modo-toggle{ display:flex; gap:10px; margin-bottom:14px; }
+  .modo-btn{
+    background:var(--marrom-medio); color:#fff; border:none; border-radius:8px;
+    padding:10px 26px; font-size:.8rem; font-weight:800; letter-spacing:.5px;
+    text-transform:uppercase; cursor:pointer; opacity:.55;
+  }
+  .modo-btn.ativo{ opacity:1; background:var(--marrom-escuro); }
 
   .graficos{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
   @media (max-width:820px){ .graficos{ grid-template-columns:1fr; } }
@@ -266,34 +292,47 @@
     <span><i style="background:var(--nivel-muito-grave)"></i> Temporal (Perigo muito grande)</span>
   </div>
 
-  <div class="selecionador-cidade">
-    <label for="select-cidade-alerta">Cidade / estação</label>
-    <select id="select-cidade-alerta"></select>
+  <div class="filtro-global">
+    <div class="filtro-segmento" id="seg-ano">
+      <button type="button" class="filtro-btn" onclick="toggleFiltro('ano')">Ano</button>
+      <div class="filtro-painel" id="painel-ano"></div>
+    </div>
+    <div class="filtro-segmento" id="seg-mes">
+      <button type="button" class="filtro-btn" onclick="toggleFiltro('mes')">Mês</button>
+      <div class="filtro-painel" id="painel-mes"></div>
+    </div>
+    <div class="filtro-segmento filtro-segmento-grande" id="seg-cidade">
+      <button type="button" class="filtro-btn" onclick="toggleFiltro('cidade')">Cidade</button>
+      <div class="filtro-painel" id="painel-cidade"></div>
+    </div>
+    <div class="filtro-segmento filtro-segmento-grande" id="seg-regiao">
+      <button type="button" class="filtro-btn" onclick="toggleFiltro('regiao')">Região</button>
+      <div class="filtro-painel" id="painel-regiao"></div>
+    </div>
   </div>
+
   <div id="bullet-cidade"></div>
 
   <div class="graficos">
     <div class="grafico-card full">
-      <div class="selecionador-cidade">
-        <label for="select-mes-seca">Mês</label>
-        <select id="select-mes-seca"></select>
-      </div>
-      <h3>📉 Seca por categoria (% da área do estado, no mês selecionado)</h3>
+      <h3>📉 Seca por categoria (% da área do estado, mês a mês)</h3>
       <canvas id="grafico-seca"></canvas>
     </div>
+  </div>
+
+  <div style="height:22px"></div>
+
+  <div class="modo-toggle">
+    <button type="button" class="modo-btn" id="btn-modo-cidade" onclick="definirModoChuva('cidade')">Cidade</button>
+    <button type="button" class="modo-btn" id="btn-modo-regiao" onclick="definirModoChuva('regiao')">Região</button>
+  </div>
+
+  <div class="graficos">
     <div class="grafico-card">
-      <div class="selecionador-cidade">
-        <label for="select-cidade-chuva-acumulada">Cidade / estação</label>
-        <select id="select-cidade-chuva-acumulada"></select>
-      </div>
-      <h3>🌧️ Chuva acumulada por cidade (CEMADEN)</h3>
+      <h3 id="titulo-grafico-cidades">🌧️ Chuva acumulada por cidade (CEMADEN)</h3>
       <canvas id="grafico-chuva-cidades"></canvas>
     </div>
     <div class="grafico-card">
-      <div class="selecionador-cidade">
-        <label for="select-cidade-chuva">Cidade / estação</label>
-        <select id="select-cidade-chuva"></select>
-      </div>
       <h3 id="titulo-grafico-serie">📈 Chuva diária</h3>
       <canvas id="grafico-chuva-serie"></canvas>
     </div>
@@ -354,9 +393,18 @@ let dadosClimaticos = [];
 let alertas = [];
 let carregado = false;
 let ufAtual = "RS";
-let cidadeSelecionada = null;
-let mesSecaSelecionado = null;
 let graficoSeca, graficoChuvaCidades, graficoChuvaSerie;
+
+let anosFiltro = { todos: true, selecionados: new Set() };
+let mesesFiltro = { todos: true, selecionados: new Set() };
+let cidadeFiltro = { todos: true, cidade: null };
+let regiaoFiltro = { todos: true, regiao: null };
+let painelFiltroAberto = null; // 'ano' | 'mes' | 'cidade' | 'regiao' | null
+let modoAgrupamentoChuva = "cidade"; // 'cidade' | 'regiao'
+
+const NOMES_MESES = ["01","02","03","04","05","06","07","08","09","10","11","12"];
+const LABELS_MESES = { "01":"Janeiro","02":"Fevereiro","03":"Março","04":"Abril","05":"Maio","06":"Junho",
+  "07":"Julho","08":"Agosto","09":"Setembro","10":"Outubro","11":"Novembro","12":"Dezembro" };
 
 function corNivelCheia(nivel) {
   if (nivel && nivel.indexOf("muito grande") !== -1) return getVar("--nivel-muito-grave");
@@ -397,8 +445,12 @@ function mostrarCapa() {
 
 function abrirPainel(uf) {
   ufAtual = uf;
-  cidadeSelecionada = null;
-  mesSecaSelecionado = null;
+  anosFiltro = { todos: true, selecionados: new Set() };
+  mesesFiltro = { todos: true, selecionados: new Set() };
+  cidadeFiltro = { todos: true, cidade: null };
+  regiaoFiltro = { todos: true, regiao: null };
+  painelFiltroAberto = null;
+  modoAgrupamentoChuva = "cidade";
   document.getElementById("view-capa").style.display = "none";
   document.getElementById("view-painel").classList.add("ativo");
   document.getElementById("btn-nav-capa").classList.remove("ativo");
@@ -412,6 +464,10 @@ function abrirPainel(uf) {
 document.getElementById("btn-nav-capa").addEventListener("click", mostrarCapa);
 document.getElementById("btn-nav-painel").addEventListener("click", function () {
   abrirPainel(ufAtual || "RS");
+});
+
+document.addEventListener("click", function (e) {
+  if (!e.target.closest(".filtro-global")) fecharFiltros();
 });
 
 /* ---------- carregamento de dados ---------- */
@@ -439,7 +495,12 @@ function renderizarPainel() {
   if (!carregado) return;
 
   renderizarBannerSeca();
-  renderizarSelecaoCidade();
+  renderizarPainelAno();
+  renderizarPainelMes();
+  renderizarPainelCidade();
+  renderizarPainelRegiao();
+  renderizarBulletCidade();
+  atualizarBotoesModo();
   renderizarGraficoSeca();
   renderizarGraficosChuva();
 
@@ -463,39 +524,160 @@ function renderizarBannerSeca() {
   ref.textContent = (linha.referencia || "") + " · atualizado " + (linha.atualizado_em || "");
 }
 
-/* ---------- seleção de cidade: dropdown + bullet único ---------- */
-function renderizarSelecaoCidade() {
-  const linhas = alertas.filter(a => a.tipo === "Cheia" && a.uf === ufAtual);
-  linhas.sort((a, b) => a.local.localeCompare(b.local));
+/* ---------- filtro global: abrir/fechar painéis ---------- */
+function toggleFiltro(nome) {
+  painelFiltroAberto = painelFiltroAberto === nome ? null : nome;
+  atualizarPaineisFiltro();
+}
+function fecharFiltros() {
+  painelFiltroAberto = null;
+  atualizarPaineisFiltro();
+}
+function atualizarPaineisFiltro() {
+  document.getElementById("painel-ano").classList.toggle("aberto", painelFiltroAberto === "ano");
+  document.getElementById("painel-mes").classList.toggle("aberto", painelFiltroAberto === "mes");
+  document.getElementById("painel-cidade").classList.toggle("aberto", painelFiltroAberto === "cidade");
+  document.getElementById("painel-regiao").classList.toggle("aberto", painelFiltroAberto === "regiao");
+}
 
-  const selectAlerta = document.getElementById("select-cidade-alerta");
-  const selectChuva = document.getElementById("select-cidade-chuva");
-  const selectChuvaAcumulada = document.getElementById("select-cidade-chuva-acumulada");
+/* ---------- listas disponíveis pros filtros ---------- */
+function cidadesDisponiveis() {
+  return alertas.filter(a => a.tipo === "Cheia" && a.uf === ufAtual)
+    .map(a => a.local).sort((a, b) => a.localeCompare(b));
+}
+function regioesDisponiveis() {
+  const set = new Set();
+  alertas.filter(a => a.tipo === "Cheia" && a.uf === ufAtual).forEach(a => {
+    if (a.regiao) set.add(a.regiao);
+  });
+  return Array.from(set).sort((a, b) => a.localeCompare(b));
+}
+function anosDisponiveis() {
+  const set = new Set();
+  const cidadesUf = new Set(cidadesDisponiveis());
+  dadosClimaticos.forEach(r => {
+    const pertenceUf =
+      (r.fonte === "MonitorDeSecas-ANA" && r.estacao_codigo === ufAtual) ||
+      (r.fonte === "CEMADEN" && cidadesUf.has(r.estacao_codigo));
+    if (!pertenceUf) return;
+    const ano = String(r.data).slice(0, 4);
+    if (ano.length === 4 && !isNaN(ano)) set.add(ano);
+  });
+  return Array.from(set).sort();
+}
+
+/* ---------- painel ANO (multi-seleção + Todos) ---------- */
+function renderizarPainelAno() {
+  const anos = anosDisponiveis();
+  const painel = document.getElementById("painel-ano");
+  let html = '<div class="filtro-item todos" onclick="marcarAnoTodos()">' +
+    (anosFiltro.todos ? "☑" : "☐") + ' Todos</div>';
+  html += anos.map(a => '<div class="filtro-item" onclick="toggleAno(\'' + a + '\')">' +
+    ((!anosFiltro.todos && anosFiltro.selecionados.has(a)) ? "☑" : "☐") + ' ' + a + '</div>').join("");
+  painel.innerHTML = html || '<div class="filtro-item">Sem dados ainda</div>';
+}
+function marcarAnoTodos() {
+  anosFiltro.todos = true; anosFiltro.selecionados.clear();
+  renderizarPainelAno(); atualizarGraficos();
+}
+function toggleAno(ano) {
+  anosFiltro.todos = false;
+  if (anosFiltro.selecionados.has(ano)) anosFiltro.selecionados.delete(ano);
+  else anosFiltro.selecionados.add(ano);
+  if (anosFiltro.selecionados.size === 0) anosFiltro.todos = true;
+  renderizarPainelAno(); atualizarGraficos();
+}
+
+/* ---------- painel MÊS (multi-seleção + Todos) ---------- */
+function renderizarPainelMes() {
+  const painel = document.getElementById("painel-mes");
+  let html = '<div class="filtro-item todos" onclick="marcarMesTodos()">' +
+    (mesesFiltro.todos ? "☑" : "☐") + ' Todos</div>';
+  html += NOMES_MESES.map(m => '<div class="filtro-item" onclick="toggleMes(\'' + m + '\')">' +
+    ((!mesesFiltro.todos && mesesFiltro.selecionados.has(m)) ? "☑" : "☐") + ' ' + LABELS_MESES[m] + '</div>').join("");
+  painel.innerHTML = html;
+}
+function marcarMesTodos() {
+  mesesFiltro.todos = true; mesesFiltro.selecionados.clear();
+  renderizarPainelMes(); atualizarGraficos();
+}
+function toggleMes(mes) {
+  mesesFiltro.todos = false;
+  if (mesesFiltro.selecionados.has(mes)) mesesFiltro.selecionados.delete(mes);
+  else mesesFiltro.selecionados.add(mes);
+  if (mesesFiltro.selecionados.size === 0) mesesFiltro.todos = true;
+  renderizarPainelMes(); atualizarGraficos();
+}
+
+/* ---------- painel CIDADE (seleção única + Todos) ---------- */
+function renderizarPainelCidade() {
+  const cidades = cidadesDisponiveis();
+  const painel = document.getElementById("painel-cidade");
+  let html = '<div class="filtro-item todos" onclick="marcarCidadeTodos()">' +
+    (cidadeFiltro.todos ? "●" : "○") + ' Todos</div>';
+  html += cidades.map(c => '<div class="filtro-item" onclick="selecionarCidadeFiltro(\'' + c.replace(/'/g, "\\'") + '\')">' +
+    ((!cidadeFiltro.todos && cidadeFiltro.cidade === c) ? "●" : "○") + ' ' + c + '</div>').join("");
+  painel.innerHTML = html || '<div class="filtro-item">Sem cidades ainda</div>';
+}
+function marcarCidadeTodos() {
+  cidadeFiltro.todos = true; cidadeFiltro.cidade = null;
+  renderizarPainelCidade(); atualizarGraficos();
+}
+function selecionarCidadeFiltro(cidade) {
+  cidadeFiltro.todos = false; cidadeFiltro.cidade = cidade;
+  renderizarPainelCidade(); atualizarGraficos();
+}
+
+/* ---------- painel REGIÃO (seleção única + Todos) ---------- */
+function renderizarPainelRegiao() {
+  const regioes = regioesDisponiveis();
+  const painel = document.getElementById("painel-regiao");
+  let html = '<div class="filtro-item todos" onclick="marcarRegiaoTodos()">' +
+    (regiaoFiltro.todos ? "●" : "○") + ' Todos</div>';
+  html += regioes.map(r => '<div class="filtro-item" onclick="selecionarRegiaoFiltro(\'' + r.replace(/'/g, "\\'") + '\')">' +
+    ((!regiaoFiltro.todos && regiaoFiltro.regiao === r) ? "●" : "○") + ' ' + r + '</div>').join("");
+  painel.innerHTML = html || '<div class="filtro-item">Sem regiões ainda — preencha as abas "regiões RS"/"regiões SP" na planilha.</div>';
+}
+function marcarRegiaoTodos() {
+  regiaoFiltro.todos = true; regiaoFiltro.regiao = null;
+  renderizarPainelRegiao(); atualizarGraficos();
+}
+function selecionarRegiaoFiltro(regiao) {
+  regiaoFiltro.todos = false; regiaoFiltro.regiao = regiao;
+  renderizarPainelRegiao(); atualizarGraficos();
+}
+
+function atualizarGraficos() {
+  renderizarBulletCidade();
+  renderizarGraficoSeca();
+  renderizarGraficosChuva();
+}
+
+/* ---------- alternador Cidade / Região dos gráficos de chuva ---------- */
+function definirModoChuva(modo) {
+  modoAgrupamentoChuva = modo;
+  atualizarBotoesModo();
+  renderizarGraficosChuva();
+}
+function atualizarBotoesModo() {
+  document.getElementById("btn-modo-cidade").classList.toggle("ativo", modoAgrupamentoChuva === "cidade");
+  document.getElementById("btn-modo-regiao").classList.toggle("ativo", modoAgrupamentoChuva === "regiao");
+  document.getElementById("titulo-grafico-cidades").textContent =
+    modoAgrupamentoChuva === "regiao" ? "🌧️ Chuva acumulada por região (CEMADEN)" : "🌧️ Chuva acumulada por cidade (CEMADEN)";
+}
+
+/* ---------- bullet da cidade escolhida no filtro ---------- */
+function renderizarBulletCidade() {
   const bullet = document.getElementById("bullet-cidade");
-
-  if (!linhas.length) {
-    const semOpcao = '<option value="">Sem cidades ainda</option>';
-    selectAlerta.innerHTML = semOpcao;
-    selectChuva.innerHTML = semOpcao;
-    selectChuvaAcumulada.innerHTML = semOpcao;
-    bullet.innerHTML = '<div class="sem-dados">Nenhum alerta de cheia calculado ainda para ' + ufAtual +
-      '. Rode a coleta na planilha (menu 🌦️ Painel Clima) — o CEMADEN já é suficiente pra preencher isso.</div>';
+  if (cidadeFiltro.todos || !cidadeFiltro.cidade) {
+    bullet.innerHTML = '<div class="sem-dados">Selecione uma cidade no filtro acima pra ver o status dela.</div>';
     return;
   }
-
-  if (!cidadeSelecionada || !linhas.find(l => l.local === cidadeSelecionada)) {
-    cidadeSelecionada = linhas[0].local;
+  const l = alertas.find(a => a.tipo === "Cheia" && a.uf === ufAtual && a.local === cidadeFiltro.cidade);
+  if (!l) {
+    bullet.innerHTML = '<div class="sem-dados">Sem dados de cheia pra essa cidade ainda.</div>';
+    return;
   }
-
-  const optionsHtml = linhas.map(l =>
-    '<option value="' + l.local.replace(/"/g, "&quot;") + '"' +
-    (l.local === cidadeSelecionada ? " selected" : "") + '>' + l.local + '</option>'
-  ).join("");
-  selectAlerta.innerHTML = optionsHtml;
-  selectChuva.innerHTML = optionsHtml;
-  selectChuvaAcumulada.innerHTML = optionsHtml;
-
-  const l = linhas.find(x => x.local === cidadeSelecionada);
   const cor = corNivelCheia(l.nivel);
   bullet.innerHTML =
     '<div class="card-mini" style="border-left-color:' + cor + '">' +
@@ -505,103 +687,84 @@ function renderizarSelecaoCidade() {
     '</div>';
 }
 
-function selecionarCidade(cidade) {
-  cidadeSelecionada = cidade;
-  renderizarSelecaoCidade();
-  renderizarGraficosChuva();
+/* ---------- filtro combinado de ano+mês pra um valor de data "yyyy-MM-..." ---------- */
+function passaFiltroData(dataStr) {
+  const ano = String(dataStr).slice(0, 4);
+  const mes = String(dataStr).slice(5, 7);
+  const okAno = anosFiltro.todos || anosFiltro.selecionados.has(ano);
+  const okMes = mesesFiltro.todos || mesesFiltro.selecionados.has(mes);
+  return okAno && okMes;
 }
 
-document.getElementById("select-cidade-alerta").addEventListener("change", function (e) {
-  selecionarCidade(e.target.value);
-});
-document.getElementById("select-cidade-chuva").addEventListener("change", function (e) {
-  selecionarCidade(e.target.value);
-});
-document.getElementById("select-cidade-chuva-acumulada").addEventListener("change", function (e) {
-  selecionarCidade(e.target.value);
-});
-
-/* ---------- gráfico de seca: barras por categoria, com menu de mês ---------- */
+/* ---------- gráfico de seca (stacked area, mês a mês, respeitando filtro ano/mês) ---------- */
 function renderizarGraficoSeca() {
   const porMes = {};
   dadosClimaticos.forEach(r => {
     if (r.fonte !== "MonitorDeSecas-ANA" || r.estacao_codigo !== ufAtual) return;
+    if (!passaFiltroData(r.data)) return;
     const mes = String(r.data).slice(0, 7);
     const categoria = String(r.variavel).replace("seca_", "");
     if (!porMes[mes]) porMes[mes] = { s0s4: 0, s1s4: 0, s2s4: 0, s3s4: 0, s4: 0 };
     if (porMes[mes][categoria] !== undefined) porMes[mes][categoria] = parseFloat(r.valor) || 0;
   });
   const meses = Object.keys(porMes).sort();
-
-  const selectMes = document.getElementById("select-mes-seca");
-  if (!meses.length) {
-    selectMes.innerHTML = '<option value="">Sem dados ainda</option>';
-    if (graficoSeca) { graficoSeca.destroy(); graficoSeca = null; }
-    return;
-  }
-  if (!mesSecaSelecionado || meses.indexOf(mesSecaSelecionado) === -1) {
-    mesSecaSelecionado = meses[meses.length - 1]; // mês mais recente por padrão
-  }
-  selectMes.innerHTML = meses.slice().reverse().map(m =>
-    '<option value="' + m + '"' + (m === mesSecaSelecionado ? " selected" : "") + '>' + m + '</option>'
-  ).join("");
-
   const cats = ["s0s4", "s1s4", "s2s4", "s3s4", "s4"];
   const labelsCat = { s0s4: "S0-S4", s1s4: "S1-S4", s2s4: "S2-S4", s3s4: "S3-S4", s4: "S4" };
   const coresCat = { s0s4: getVar("--seca-s0"), s1s4: getVar("--seca-s1"), s2s4: getVar("--seca-s2"),
     s3s4: getVar("--seca-s3"), s4: getVar("--seca-s4") };
-  const valoresMes = porMes[mesSecaSelecionado];
+
+  const datasets = cats.map(c => ({
+    label: labelsCat[c],
+    data: meses.map(m => porMes[m][c]),
+    borderColor: coresCat[c], backgroundColor: coresCat[c] + "55", fill: true, tension: .25,
+  }));
 
   if (graficoSeca) graficoSeca.destroy();
   graficoSeca = new Chart(document.getElementById("grafico-seca"), {
-    type: "bar",
-    data: {
-      labels: cats.map(c => labelsCat[c]),
-      datasets: [{
-        label: "% da área — " + mesSecaSelecionado,
-        data: cats.map(c => valoresMes[c]),
-        backgroundColor: cats.map(c => coresCat[c]),
-      }],
-    },
+    type: "line",
+    data: { labels: meses, datasets },
     options: {
       responsive: true,
-      plugins: { legend: { display: false } },
-      scales: { y: { title: { display: true, text: "% da área" }, beginAtZero: true } },
+      plugins: { legend: { position: "bottom" } },
+      scales: { y: { title: { display: true, text: "% da área" } } },
     },
   });
 }
 
-document.getElementById("select-mes-seca").addEventListener("change", function (e) {
-  mesSecaSelecionado = e.target.value;
-  renderizarGraficoSeca();
-});
-
-/* ---------- gráficos de chuva (bar por cidade, gradiente de azul + linha diária) ---------- */
+/* ---------- gráficos de chuva: agrupa por cidade OU por região, conforme o alternador ---------- */
 function renderizarGraficosChuva() {
-  const totalPorCidade = {};
-  const seriePorCidade = {};
-
+  const registros = [];
   dadosClimaticos.forEach(r => {
     if (r.fonte !== "CEMADEN" || r.variavel !== "precipitacao_mm") return;
+    if (!passaFiltroData(r.data)) return;
 
-    // descobre a cidade/estação pertence à uf atual olhando os alertas já calculados
     const info = alertas.find(a => a.tipo === "Cheia" && a.local === r.estacao_codigo);
-    const uf = info ? info.uf : null;
-    if (uf !== ufAtual) return;
+    if (!info || info.uf !== ufAtual) return;
+    if (!cidadeFiltro.todos && r.estacao_codigo !== cidadeFiltro.cidade) return;
+    if (!regiaoFiltro.todos && (info.regiao || "") !== regiaoFiltro.regiao) return;
 
-    const cidade = r.estacao_codigo;
-    const valor = parseFloat(r.valor) || 0;
-    const dia = String(r.data).slice(0, 10);
-
-    totalPorCidade[cidade] = (totalPorCidade[cidade] || 0) + valor;
-    if (!seriePorCidade[cidade]) seriePorCidade[cidade] = {};
-    seriePorCidade[cidade][dia] = (seriePorCidade[cidade][dia] || 0) + valor;
+    registros.push({
+      cidade: r.estacao_codigo,
+      regiao: info.regiao || "Sem região",
+      valor: parseFloat(r.valor) || 0,
+      dia: String(r.data).slice(0, 10),
+    });
   });
 
-  let cidades = Object.keys(totalPorCidade);
-  cidades.sort((a, b) => totalPorCidade[b] - totalPorCidade[a]);
-  const top = cidades.slice(0, 12);
-  const valoresTop = top.map(c => totalPorCidade[c]);
+  const chaveGrupo = modoAgrupamentoChuva === "regiao" ? "regiao" : "cidade";
+  const totalPorGrupo = {};
+  const seriePorGrupo = {};
+  registros.forEach(reg => {
+    const g = reg[chaveGrupo];
+    totalPorGrupo[g] = (totalPorGrupo[g] || 0) + reg.valor;
+    if (!seriePorGrupo[g]) seriePorGrupo[g] = {};
+    seriePorGrupo[g][reg.dia] = (seriePorGrupo[g][reg.dia] || 0) + reg.valor;
+  });
+
+  let grupos = Object.keys(totalPorGrupo);
+  grupos.sort((a, b) => totalPorGrupo[b] - totalPorGrupo[a]);
+  const top = grupos.slice(0, 12);
+  const valoresTop = top.map(g => totalPorGrupo[g]);
   const minV = valoresTop.length ? Math.min(...valoresTop) : 0;
   const maxV = valoresTop.length ? Math.max(...valoresTop) : 0;
 
@@ -612,24 +775,29 @@ function renderizarGraficosChuva() {
       labels: top,
       datasets: [{
         label: "Chuva acumulada (mm)",
-        data: top.map(c => Math.round(totalPorCidade[c] * 10) / 10),
-        backgroundColor: top.map(c => corGradienteAzul(totalPorCidade[c], minV, maxV)),
-        borderColor: top.map(c => c === cidadeSelecionada ? "#2c2a25" : "rgba(0,0,0,0)"),
-        borderWidth: top.map(c => c === cidadeSelecionada ? 3 : 0),
+        data: top.map(g => Math.round(totalPorGrupo[g] * 10) / 10),
+        backgroundColor: top.map(g => corGradienteAzul(totalPorGrupo[g], minV, maxV)),
       }],
     },
     options: {
       responsive: true, indexAxis: "y",
       plugins: { legend: { display: false } },
-      onClick: (evt, els) => { if (els.length) selecionarCidade(top[els[0].index]); },
+      onClick: (evt, els) => {
+        if (!els.length) return;
+        if (modoAgrupamentoChuva === "regiao") selecionarRegiaoFiltro(top[els[0].index]);
+        else selecionarCidadeFiltro(top[els[0].index]);
+      },
     },
   });
 
-  const cidadeAlvo = cidadeSelecionada && seriePorCidade[cidadeSelecionada] ? cidadeSelecionada : top[0];
-  document.getElementById("titulo-grafico-serie").textContent =
-    "📈 Chuva diária — " + (cidadeAlvo || "sem dados");
+  const grupoAlvo = modoAgrupamentoChuva === "regiao"
+    ? (!regiaoFiltro.todos ? regiaoFiltro.regiao : top[0])
+    : (!cidadeFiltro.todos ? cidadeFiltro.cidade : top[0]);
 
-  const serie = cidadeAlvo ? seriePorCidade[cidadeAlvo] || {} : {};
+  document.getElementById("titulo-grafico-serie").textContent =
+    "📈 Chuva diária — " + (grupoAlvo || "sem dados");
+
+  const serie = grupoAlvo ? seriePorGrupo[grupoAlvo] || {} : {};
   const dias = Object.keys(serie).sort();
 
   if (graficoChuvaSerie) graficoChuvaSerie.destroy();
