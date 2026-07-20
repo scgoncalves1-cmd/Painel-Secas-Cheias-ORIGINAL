@@ -3,274 +3,206 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Entre Secas e Cheias — Painel de Monitoramento Rio Grande do Sul /São Paulo</title>
+<title>Secas e Cheias — Painel de Monitoramento RS / SP</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
   :root{
-    --verde-escuro:#28421f;
-    --verde-medio:#3c5a34;
-    --verde-claro:#6a8f52;
-    --marrom-escuro:#3a2a1c;
-    --marrom-medio:#57402c;
-    --laranja:#e08a3c;
-    --laranja-forte:#d9711f;
-    --ods-verde:#4f8a3d;
-    --ods-teal:#3c7a72;
-    --bg-claro:#f4efe4;
-    --bg-card:#ffffff;
-    --texto-escuro:#2c2a25;
-    --texto-suave:#6b6559;
-    --branco:#ffffff;
-    --nivel-normal:#8a9a86;
-    --nivel-perigo:#f1c232;
-    --nivel-grande-perigo:#e69138;
-    --nivel-muito-grave:#c0392b;
-    --seca-sem:#192954;
-    --seca-s0:#b67120;
-    --seca-s1:#e69138;
-    --seca-s2:#d9711f;
-    --seca-s3:#c0392b;
-    --seca-s4:#7b241c;
-    --azul-marinho:#16213e;
-    --azul-marinho-claro:#1f2d54;
+    --verde-escuro:#28421f; --verde-medio:#3c5a34; --verde-claro:#6a8f52;
+    --marrom-escuro:#3a2a1c; --marrom-medio:#57402c;
+    --laranja:#e08a3c; --laranja-forte:#d9711f;
+    --bg-claro:#f4efe4; --bg-card:#ffffff;
+    --texto-escuro:#2c2a25; --texto-suave:#6b6559; --branco:#ffffff;
+    --nivel-normal:#8a9a86; --nivel-perigo:#f1c232;
+    --nivel-grande-perigo:#e69138; --nivel-muito-grave:#c0392b;
+    --seca-sem:#192954; --seca-s0:#b67120; --seca-s1:#e69138;
+    --seca-s2:#d9711f; --seca-s3:#c0392b; --seca-s4:#7b241c;
+    --azul-marinho:#16213e; --border-color:#e7e1d2;
   }
+  body.dark{
+    --bg-claro:#12151c; --bg-card:#1c2130; --texto-escuro:#dde1ea;
+    --texto-suave:#8a90a0; --branco:#1c2130; --border-color:#2a3040;
+  }
+  body.dark .secao-seca{ background:#1a1710 !important; }
+  body.dark .secao-chuva{ background:#0f1525 !important; }
+  body.dark .topbar{ background:#1c2130; border-color:#2a3040; }
+  body.dark .nav-pill{ background:#12151c; }
+  body.dark .footer-logo{ background:#12151c; border-color:#2a3040; }
+  body.dark .nota-fonte{ background:#1e2235; }
+  body.dark .cal-cell{ background:#2a3040; }
   *{ box-sizing:border-box; }
-  body{
-    margin:0; font-family:"Segoe UI", Roboto, Arial, sans-serif;
-    background:var(--bg-claro); color:var(--texto-escuro);
-  }
+  body{ margin:0; font-family:"Segoe UI",Roboto,Arial,sans-serif; background:var(--bg-claro); color:var(--texto-escuro); transition:background .3s,color .3s; }
   a{ color:inherit; text-decoration:none; }
-  /* ===== Top bar ===== */
-  .topbar{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 28px; background:var(--branco); border-bottom:1px solid #e7e1d2;
-    position:sticky; top:0; z-index:50;
-  }
-  .topbar .marca{ font-weight:700; letter-spacing:.5px; color:var(--verde-escuro); }
-  .nav-pill{
-    display:flex; background:#eee8d9; border-radius:999px; padding:4px; gap:4px;
-  }
-  .nav-pill button{
-    border:none; background:transparent; padding:8px 20px; border-radius:999px;
-    font-size:.85rem; font-weight:600; cursor:pointer; color:var(--texto-suave);
-    transition:.15s;
-  }
-  .nav-pill button.ativo{ background:var(--verde-escuro); color:#fff; }
-  /* ===== Hero ===== */
-  .hero{
-    position:relative; overflow:hidden; text-align:center; color:var(--texto-escuro);
-    padding:56px 24px 40px;
-    background:var(--bg-claro);
-  }
-  .hero > *{ position:relative; }
-  .badge-pesquisa{
-    display:inline-block; border:1px solid rgba(0,0,0,.15); border-radius:999px;
-    padding:6px 18px; font-size:.72rem; letter-spacing:1.5px; text-transform:uppercase;
-    margin-bottom:22px; color:var(--texto-suave);
-  }
 
+  /* TOPBAR */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:14px 28px; background:var(--branco); border-bottom:1px solid var(--border-color); position:sticky; top:0; z-index:50; }
+  .topbar .marca{ font-weight:700; letter-spacing:.5px; color:var(--verde-escuro); }
+  .topbar-right{ display:flex; align-items:center; gap:12px; }
+  .nav-pill{ display:flex; background:#eee8d9; border-radius:999px; padding:4px; gap:4px; }
+  .nav-pill button{ border:none; background:transparent; padding:8px 20px; border-radius:999px; font-size:.85rem; font-weight:600; cursor:pointer; color:var(--texto-suave); transition:.15s; }
+  .nav-pill button.ativo{ background:var(--verde-escuro); color:#fff; }
+  .dark-toggle{ background:none; border:1px solid var(--border-color); border-radius:999px; padding:7px 16px; font-size:.78rem; cursor:pointer; color:var(--texto-suave); }
+
+  /* HERO */
+  .hero{ text-align:center; color:var(--texto-escuro); padding:56px 24px 40px; background:var(--bg-claro); }
+  .badge-pesquisa{ display:inline-block; border:1px solid rgba(0,0,0,.15); border-radius:999px; padding:6px 18px; font-size:.72rem; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:22px; color:var(--texto-suave); }
   .hero h1{ font-size:2.4rem; margin:0 0 22px; font-weight:800; color:var(--verde-escuro); }
   .hero h1 .accent{ color:var(--laranja-forte); }
   .tags-ods{ display:flex; justify-content:center; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:26px; }
   .ods-item{ display:flex; flex-direction:column; align-items:center; max-width:200px; }
-  .ods-item img{
-    height:96px; width:96px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,.12);
-    cursor:pointer; transition:transform .15s, box-shadow .15s;
-  }
+  .ods-item img{ height:96px; width:96px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,.12); cursor:pointer; transition:transform .15s,box-shadow .15s; }
   .ods-item img:hover{ transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,.18); }
-  .ods-aba{
-    display:none; margin-top:10px; background:#fff; border-radius:10px;
-    padding:12px 16px; font-size:.78rem; color:var(--texto-escuro); line-height:1.55;
-    box-shadow:0 4px 14px rgba(0,0,0,.1); text-align:left; border-top:3px solid var(--laranja);
-  }
+  .ods-aba{ display:none; margin-top:10px; background:#fff; border-radius:10px; padding:12px 16px; font-size:.78rem; color:var(--texto-escuro); line-height:1.55; box-shadow:0 4px 14px rgba(0,0,0,.1); text-align:left; border-top:3px solid var(--laranja); }
   .ods-aba.aberta{ display:block; }
-  .rodape-academico{
-    display:flex; justify-content:center; align-items:center; gap:22px; flex-wrap:wrap;
-    font-size:.78rem; color:var(--texto-suave); border-top:1px solid #e7e1d2;
-    padding-top:16px; margin-top:8px;
-  }
-  .descricao-projeto{
-    max-width:760px; margin:0 auto 48px; text-align:center;
-    padding:0 24px;
-  }
-  .descricao-projeto p{
-    font-size:.95rem; color:var(--texto-suave); line-height:1.75;
-    margin:0;
-  }
-  .footer-logo{
-    text-align:center; padding:32px 24px 40px;
-    border-top:1px solid #e7e1d2; background:var(--bg-claro);
-  }
-  .footer-logo img{
-    height:96px; width:auto;
-    opacity:.85;
-  }
-  /* ===== Áreas de estudo ===== */
-  .secao-areas{ padding:48px 24px 64px; max-width:1100px; margin:0 auto; }
+  .rodape-academico{ display:flex; justify-content:center; align-items:center; gap:22px; flex-wrap:wrap; font-size:.78rem; color:var(--texto-suave); border-top:1px solid var(--border-color); padding-top:16px; margin-top:8px; }
+
+  /* CAPA */
+  .secao-areas{ padding:48px 24px 0; max-width:1100px; margin:0 auto; }
   .cards-estados{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-  @media (max-width:760px){ .cards-estados{ grid-template-columns:1fr; } }
-  .card-estado{
-    border-radius:18px; cursor:pointer; overflow:hidden; background:var(--bg-card);
-    display:flex; flex-direction:column;
-    box-shadow:0 1px 4px rgba(0,0,0,.08);
-    transition:transform .15s, box-shadow .15s;
-  }
+  @media(max-width:760px){ .cards-estados{ grid-template-columns:1fr; } }
+  .card-estado{ border-radius:18px; cursor:pointer; overflow:hidden; background:var(--bg-card); display:flex; flex-direction:column; box-shadow:0 1px 4px rgba(0,0,0,.08); transition:transform .15s,box-shadow .15s; }
   .card-estado:hover{ transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.18); }
-  .card-estado .forma-svg{
-    width:100%; max-height:360px; object-fit:contain; padding:22px 22px 10px;
-  }
-  .card-estado .info-estado{
-    background:linear-gradient(160deg, var(--verde-medio) 0%, var(--marrom-medio) 100%);
-    color:#fff; padding:20px 24px 22px;
-  }
+  .card-estado .forma-svg{ width:100%; max-height:360px; object-fit:contain; padding:22px 22px 10px; }
+  .card-estado .info-estado{ background:linear-gradient(160deg,var(--verde-medio) 0%,var(--marrom-medio) 100%); color:#fff; padding:20px 24px 22px; }
   .card-estado .titulo-estado{ font-size:1.05rem; font-weight:700; }
   .card-estado .desc-estado{ font-size:.82rem; color:#e4e0d2; margin-top:4px; }
   .card-estado .cta{ font-size:.82rem; font-weight:700; margin-top:14px; color:var(--laranja); }
-  /* ===== Painel (drill-down) ===== */
-  .painel-wrap{ display:none; max-width:1150px; margin:0 auto; padding:26px 20px 70px; position:relative; }
+  .descricao-projeto{ max-width:760px; margin:0 auto 48px; text-align:center; padding:32px 24px 0; }
+  .descricao-projeto p{ font-size:.95rem; color:var(--texto-suave); line-height:1.75; margin:0; }
+
+  /* PAINEL */
+  .painel-wrap{ display:none; max-width:1150px; margin:0 auto; padding:26px 20px 70px; }
   .painel-wrap.ativo{ display:block; }
-  .painel-wrap::before{
-    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
-    background-image:var(--mapa-bg);
-    background-repeat:no-repeat;
-    background-position:center center;
-    background-size:55%;
-    opacity:.08;
-  }
   .breadcrumb{ font-size:.85rem; color:var(--texto-suave); margin-bottom:6px; cursor:pointer; }
   .painel-header{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
   .painel-header h2{ margin:0; font-size:1.7rem; }
   .painel-header .atualizado{ font-size:.8rem; color:var(--texto-suave); }
-  .nota-fonte{
-    font-size:.76rem; color:var(--texto-suave); background:#eee8d9; border-radius:8px;
-    padding:8px 14px; margin-bottom:20px; display:inline-block;
-  }
-  .banner-seca{
-    border-radius:14px; padding:18px 22px; color:#fff; margin-bottom:22px;
-    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
-  }
+  .nota-fonte{ font-size:.76rem; color:var(--texto-suave); background:#eee8d9; border-radius:8px; padding:8px 14px; margin-bottom:20px; display:inline-block; }
+
+  /* KPI */
+  .kpi-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  @media(max-width:820px){ .kpi-row{ grid-template-columns:repeat(2,1fr); } }
+  .kpi-card{ background:var(--bg-card); border-radius:14px; padding:18px 20px; box-shadow:0 1px 4px rgba(0,0,0,.06); border-top:4px solid var(--laranja); }
+  .kpi-card.kpi-azul{ border-top-color:var(--azul-marinho); }
+  .kpi-card.kpi-verde{ border-top-color:#3a9a3a; }
+  .kpi-card.kpi-vermelho{ border-top-color:var(--nivel-muito-grave); }
+  .kpi-label{ font-size:.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--texto-suave); font-weight:700; }
+  .kpi-valor{ font-size:1.9rem; font-weight:800; color:var(--texto-escuro); margin-top:4px; line-height:1; }
+  .kpi-sub{ font-size:.72rem; color:var(--texto-suave); margin-top:4px; }
+
+  /* GAUGE */
+  .gauge-wrap{ background:var(--bg-card); border-radius:16px; padding:22px 28px; box-shadow:0 1px 4px rgba(0,0,0,.06); margin-bottom:24px; display:flex; align-items:center; gap:32px; flex-wrap:wrap; border:1px solid var(--border-color); }
+  .gauge-canvas-wrap{ width:180px; flex:none; }
+  .gauge-info{ flex:1; min-width:200px; }
+  .gauge-titulo{ font-size:1rem; font-weight:800; margin:0 0 8px; }
+  .gauge-desc{ font-size:.83rem; color:var(--texto-suave); line-height:1.55; }
+  .gauge-nivel-badge{ display:inline-block; border-radius:999px; padding:5px 16px; font-size:.78rem; font-weight:800; color:#fff; margin-top:10px; }
+
+  /* BANNERS */
+  .banner-seca{ border-radius:14px; padding:18px 22px; color:#fff; margin-bottom:22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
   .banner-seca .rotulo{ font-size:.78rem; text-transform:uppercase; letter-spacing:1px; font-weight:800; }
   .banner-seca .valor-linha{ display:flex; align-items:center; gap:10px; }
   .banner-seca .valor-linha i{ width:20px; height:20px; border-radius:50%; display:inline-block; flex:none; background:#fff; }
   .banner-seca .valor{ font-size:1.25rem; font-weight:800; }
-  .banner-seca #banner-seca-ref{
-    background:rgba(255,255,255,.28); color:#fff; font-weight:700;
-    padding:12px 18px; border-radius:8px; font-size:.8rem; text-align:center;
-  }
-  /* ---- faixa de status de CHUVA (distinta da faixa de seca) ---- */
-  .banner-chuva{
-    background:var(--azul-marinho); border-radius:14px; padding:20px 24px; color:#fff;
-    margin-bottom:18px; display:flex; align-items:center; justify-content:space-between;
-    flex-wrap:wrap; gap:14px;
-  }
+  .banner-seca #banner-seca-ref{ background:rgba(255,255,255,.28); color:#fff; font-weight:700; padding:12px 18px; border-radius:8px; font-size:.8rem; text-align:center; }
+  .banner-chuva{ background:var(--azul-marinho); border-radius:14px; padding:20px 24px; color:#fff; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; }
   .banner-chuva .rotulo{ font-size:.78rem; text-transform:uppercase; letter-spacing:1px; font-weight:800; }
   .banner-chuva .valor-linha{ display:flex; align-items:center; gap:10px; }
   .banner-chuva .valor-linha i{ width:20px; height:20px; border-radius:50%; display:inline-block; flex:none; }
-  .banner-chuva .valor-linha span{ font-size:.95rem; font-weight:800; text-transform:uppercase; letter-spacing:.3px; }
-  .banner-chuva .badge-ref{
-    background:var(--nivel-perigo); color:var(--azul-marinho); font-weight:700;
-    padding:12px 18px; border-radius:8px; font-size:.8rem; text-align:center;
-  }
+  .banner-chuva .valor-linha span{ font-size:.95rem; font-weight:800; text-transform:uppercase; }
+  .banner-chuva .badge-ref{ background:var(--nivel-perigo); color:var(--azul-marinho); font-weight:700; padding:12px 18px; border-radius:8px; font-size:.8rem; text-align:center; }
+
+  /* LEGENDA */
   .legenda{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:22px; font-size:.78rem; color:var(--texto-suave); }
   .legenda span{ display:inline-flex; align-items:center; gap:6px; }
   .legenda i{ width:10px; height:10px; border-radius:50%; display:inline-block; }
-  /* ---- filtro global: ANO | MÊS | CIDADE | REGIÃO ---- */
+
+  /* FILTROS */
   .filtro-global{ display:flex; gap:2px; margin-bottom:22px; position:relative; }
   .filtro-segmento{ position:relative; flex:1; }
   .filtro-segmento-grande{ flex:2; }
-  .filtro-btn{
-    width:100%; background:var(--laranja-medio); color:#fff; border:none;
-    padding:16px 20px; font-size:.85rem; font-weight:800; letter-spacing:1px;
-    text-transform:uppercase; text-align:center; cursor:pointer;
-  }
+  .filtro-btn{ width:100%; background:#57402c; color:#fff; border:none; padding:16px 20px; font-size:.85rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; text-align:center; cursor:pointer; }
   .filtro-segmento:first-child .filtro-btn{ border-radius:10px 0 0 10px; }
   .filtro-segmento:last-child .filtro-btn{ border-radius:0 10px 10px 0; }
   .filtro-global-azul .filtro-btn{ background:var(--azul-marinho); }
-  .filtro-painel{
-    display:none; position:absolute; top:100%; left:0; right:0; z-index:30;
-    background:#fff; border:1px solid #e7e1d2; border-top:none; border-radius:0 0 10px 10px;
-    box-shadow:0 10px 24px rgba(0,0,0,.15); max-height:260px; overflow-y:auto; padding:6px 0;
-  }
+  .filtro-painel{ display:none; position:absolute; top:100%; left:0; right:0; z-index:30; background:var(--bg-card); border:1px solid var(--border-color); border-top:none; border-radius:0 0 10px 10px; box-shadow:0 10px 24px rgba(0,0,0,.15); max-height:260px; overflow-y:auto; padding:6px 0; }
   .filtro-painel.aberto{ display:block; }
-  .filtro-item{
-    padding:9px 18px; font-size:.85rem; cursor:pointer; white-space:nowrap;
-    overflow:hidden; text-overflow:ellipsis;
-  }
-  .filtro-item:hover{ background:#f4efe4; }
-  .filtro-item.todos{ font-weight:700; border-bottom:1px solid #e7e1d2; margin-bottom:4px; }
+  .filtro-item{ padding:9px 18px; font-size:.85rem; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--texto-escuro); }
+  .filtro-item:hover{ background:var(--bg-claro); }
+  .filtro-item.todos{ font-weight:700; border-bottom:1px solid var(--border-color); margin-bottom:4px; }
+
   #bullet-cidade{ max-width:280px; margin-bottom:32px; }
-  .card-mini{
-    background:var(--bg-card); border-radius:12px; padding:14px 16px; border-left:6px solid var(--nivel-normal);
-    box-shadow:0 1px 4px rgba(0,0,0,.06);
-  }
+  .card-mini{ background:var(--bg-card); border-radius:12px; padding:14px 16px; border-left:6px solid var(--nivel-normal); box-shadow:0 1px 4px rgba(0,0,0,.06); }
   .card-mini .cidade{ font-weight:700; font-size:.92rem; }
   .card-mini .valor{ font-size:.8rem; color:var(--texto-suave); margin-top:2px; }
   .card-mini .nivel{ font-size:.72rem; font-weight:700; margin-top:6px; }
   .sem-dados{ font-size:.85rem; color:var(--texto-suave); font-style:italic; padding:10px 0; }
-  /* ---- alternador de agrupamento dos gráficos de chuva: CIDADE | REGIÃO + dropdown local ---- */
+
+  /* MODO TOGGLE */
   .modo-toggle{ display:flex; gap:10px; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; }
-  .modo-btn{
-    background:#c7cbdb; color:var(--azul-marinho); border:none; border-radius:8px;
-    padding:10px 26px; font-size:.8rem; font-weight:800; letter-spacing:.5px;
-    text-transform:uppercase; cursor:pointer;
-  }
+  .modo-btn{ background:#c7cbdb; color:var(--azul-marinho); border:none; border-radius:8px; padding:10px 26px; font-size:.8rem; font-weight:800; letter-spacing:.5px; text-transform:uppercase; cursor:pointer; }
   .modo-btn.ativo{ background:var(--azul-marinho); color:#fff; }
+
+  /* GRAFICOS */
   .graficos{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
-  @media (max-width:820px){ .graficos{ grid-template-columns:1fr; } }
+  @media(max-width:820px){ .graficos{ grid-template-columns:1fr; } }
   .grafico-card{ background:var(--bg-card); border-radius:14px; padding:18px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
-  .grafico-card h3{ margin:0 0 12px; font-size:.95rem; }
+  .grafico-card h3{ margin:0 0 12px; font-size:.95rem; color:var(--texto-escuro); }
   .grafico-card.full{ grid-column:1 / -1; }
   canvas{ max-height:280px; }
-  .secao-painel{
-    background:var(--bg-card); border-radius:16px; padding:24px; margin-bottom:26px;
-    box-shadow:0 1px 4px rgba(0,0,0,.05); border:1px solid #e7e1d2;
-  }
-  .secao-painel-titulo{
-    font-size:1.05rem; font-weight:800; margin:0 0 18px; text-transform:uppercase; letter-spacing:.5px;
-  }
-  .secao-seca .secao-painel-titulo{ color:var(--laranja-medio); }
+
+  /* HEATMAP */
+  .calendario-wrap{ background:var(--bg-card); border-radius:14px; padding:18px 20px; box-shadow:0 1px 4px rgba(0,0,0,.06); margin-bottom:22px; overflow-x:auto; }
+  .calendario-titulo{ font-size:.9rem; font-weight:700; margin:0 0 14px; color:var(--texto-escuro); }
+  .calendario-grid{ display:flex; gap:5px; min-width:max-content; }
+  .cal-col{ display:flex; flex-direction:column; gap:3px; }
+  .cal-label-mes{ font-size:.65rem; color:var(--texto-suave); text-align:center; height:14px; line-height:14px; font-weight:700; }
+  .cal-label-dia{ font-size:.6rem; color:var(--texto-suave); text-align:right; width:18px; height:14px; line-height:14px; }
+  .cal-cell{ width:14px; height:14px; border-radius:3px; background:#e8e2d4; cursor:pointer; }
+
+  /* SECOES */
+  .secao-painel{ background:var(--bg-card); border-radius:16px; padding:24px; margin-bottom:26px; box-shadow:0 1px 4px rgba(0,0,0,.05); border:1px solid var(--border-color); }
+  .secao-seca{ background:#fdf8f0 !important; }
+  .secao-chuva{ background:#f0f4fc !important; }
+  .secao-painel-titulo{ font-size:1.05rem; font-weight:800; margin:0 0 18px; text-transform:uppercase; letter-spacing:.5px; }
+  .secao-seca .secao-painel-titulo{ color:var(--laranja-forte); }
   .secao-chuva .secao-painel-titulo{ color:var(--azul-marinho); }
-  .aviso-config{
-    max-width:640px; margin:60px auto; background:#fff3cd; border:1px solid #ffe08a;
-    border-radius:12px; padding:20px 24px; font-size:.88rem; line-height:1.5;
-  }
+
+  .aviso-config{ max-width:640px; margin:60px auto; background:#fff3cd; border:1px solid #ffe08a; border-radius:12px; padding:20px 24px; font-size:.88rem; line-height:1.5; }
   .aviso-config code{ background:#00000010; padding:1px 6px; border-radius:4px; }
+
+  /* FOOTER */
+  .footer-logo{ text-align:center; padding:32px 24px 40px; border-top:1px solid var(--border-color); background:var(--bg-claro); }
+  .footer-logo img{ height:96px; width:auto; opacity:.85; }
 </style>
 </head>
 <body>
 <div class="topbar">
   <div class="marca"></div>
-  <div class="nav-pill">
-    <button id="btn-nav-capa" class="ativo">Início</button>
+  <div class="topbar-right">
+    <div class="nav-pill">
+      <button id="btn-nav-capa" class="ativo">Início</button>
+    </div>
+    <button class="dark-toggle" onclick="toggleDark()" id="btn-dark">🌙 Escuro</button>
   </div>
 </div>
-<!-- ============ CAPA ============ -->
+
+<!-- CAPA -->
 <div id="view-capa">
   <div class="hero">
     <div class="badge-pesquisa">Pesquisa de Mestrado · PPGCidades · UCS</div>
-
     <h1><span class="accent">Secas</span> e <span class="accent">Cheias</span></h1>
     <div class="tags-ods">
       <div class="ods-item">
         <img src="ods11.png" alt="ODS 11" onclick="toggleOds('ods11')">
-        <div class="ods-aba" id="ods11">
-          <strong>ODS 11 — Cidades e Comunidades Sustentáveis</strong><br>
-          O painel apoia a construção de cidades mais resilientes ao monitorar riscos climáticos urbanos — como enchentes e estiagens — subsidiando ações de planejamento territorial e gestão de desastres.
-        </div>
+        <div class="ods-aba" id="ods11"><strong>ODS 11 — Cidades e Comunidades Sustentáveis</strong><br>O painel apoia a construção de cidades mais resilientes ao monitorar riscos climáticos urbanos, subsidiando ações de planejamento territorial e gestão de desastres.</div>
       </div>
       <div class="ods-item">
         <img src="ods13.png" alt="ODS 13" onclick="toggleOds('ods13')">
-        <div class="ods-aba" id="ods13">
-          <strong>ODS 13 — Ação Contra a Mudança Global do Clima</strong><br>
-          Ao integrar dados de seca e chuva intensa em tempo real, o painel contribui para a tomada de decisão climática em nível local, fortalecendo a capacidade adaptativa dos municípios frente às mudanças climáticas.
-        </div>
+        <div class="ods-aba" id="ods13"><strong>ODS 13 — Ação Contra a Mudança Global do Clima</strong><br>Ao integrar dados de seca e chuva intensa em tempo real, contribui para a tomada de decisão climática local, fortalecendo a capacidade adaptativa dos municípios.</div>
       </div>
       <div class="ods-item">
         <img src="ods3.png" alt="ODS 3" onclick="toggleOds('ods3')">
-        <div class="ods-aba" id="ods3">
-          <strong>ODS 3 — Saúde e Bem-Estar</strong><br>
-          Eventos climáticos extremos impactam diretamente a saúde pública. O monitoramento de secas e cheias permite antecipar riscos à população — como surtos de doenças, desabastecimento de água e deslocamentos forçados.
-        </div>
+        <div class="ods-aba" id="ods3"><strong>ODS 3 — Saúde e Bem-Estar</strong><br>O monitoramento de secas e cheias permite antecipar riscos à saúde pública — como surtos de doenças, desabastecimento de água e deslocamentos forçados.</div>
       </div>
     </div>
     <div class="rodape-academico">
@@ -280,7 +212,7 @@
   </div>
   <div class="secao-areas">
     <div class="cards-estados">
-      <div class="card-estado rs" onclick="abrirPainel('RS')">
+      <div class="card-estado" onclick="abrirPainel('RS')">
         <img class="forma-svg" src="rs.png" alt="Mapa do Rio Grande do Sul">
         <div class="info-estado">
           <div class="titulo-estado">Rio Grande do Sul</div>
@@ -288,7 +220,7 @@
           <div class="cta">Ver painel →</div>
         </div>
       </div>
-      <div class="card-estado sp" onclick="abrirPainel('SP')">
+      <div class="card-estado" onclick="abrirPainel('SP')">
         <img class="forma-svg" src="sp.png" alt="Mapa de São Paulo">
         <div class="info-estado">
           <div class="titulo-estado">São Paulo</div>
@@ -302,17 +234,52 @@
     <p>Este painel tem como objetivo auxiliar gestores municipais no monitoramento das mudanças climáticas — secas prolongadas e eventos extremos de chuva — que afetam diretamente a qualidade de vida nas cidades. A partir de dados do CEMADEN e do Monitor de Secas da ANA, busca oferecer subsídios para a formulação de políticas públicas de prevenção, adaptação e resposta a desastres climáticos.</p>
   </div>
 </div>
-<!-- ============ PAINEL (drill-down) ============ -->
+
+<!-- PAINEL -->
 <div id="view-painel" class="painel-wrap">
   <div class="breadcrumb" onclick="mostrarCapa()">← Voltar</div>
   <div class="painel-header">
     <h2 id="painel-titulo">Painel — RS</h2>
     <div class="atualizado" id="painel-atualizado"></div>
   </div>
-  <div class="nota-fonte">
-    📌 Fonte dos dados: CEMADEN (chuva e alertas de cheia) e Monitor de Secas — ANA (níveis de seca), coletados automaticamente e atualizados periodicamente.
-  </div>
+  <div class="nota-fonte">📌 Fonte: CEMADEN (chuva e alertas de cheia) e Monitor de Secas — ANA (níveis de seca).</div>
   <div id="painel-config-aviso"></div>
+
+  <!-- KPI -->
+  <div class="kpi-row">
+    <div class="kpi-card kpi-azul">
+      <div class="kpi-label">🌧️ Chuva total</div>
+      <div class="kpi-valor" id="kpi-chuva">—</div>
+      <div class="kpi-sub">mm no período filtrado</div>
+    </div>
+    <div class="kpi-card kpi-verde">
+      <div class="kpi-label">🏜️ Área em seca</div>
+      <div class="kpi-valor" id="kpi-seca">—</div>
+      <div class="kpi-sub">% do estado (último mês)</div>
+    </div>
+    <div class="kpi-card kpi-vermelho">
+      <div class="kpi-label">🚨 Cidades em alerta</div>
+      <div class="kpi-valor" id="kpi-alertas">—</div>
+      <div class="kpi-sub">acima do nível normal</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">📅 Meses monitorados</div>
+      <div class="kpi-valor" id="kpi-meses">—</div>
+      <div class="kpi-sub">no período selecionado</div>
+    </div>
+  </div>
+
+  <!-- GAUGE -->
+  <div class="gauge-wrap">
+    <div class="gauge-canvas-wrap"><canvas id="grafico-gauge"></canvas></div>
+    <div class="gauge-info">
+      <div class="gauge-titulo">⚠️ Índice de Risco Climático</div>
+      <div class="gauge-desc">Estimativa combinada baseada nos dados de seca (Monitor ANA) e alertas de cheia (CEMADEN) para o período filtrado.</div>
+      <div class="gauge-nivel-badge" id="gauge-badge" style="background:var(--nivel-normal)">Calculando...</div>
+    </div>
+  </div>
+
+  <!-- SECA -->
   <div class="secao-painel secao-seca">
     <div class="secao-painel-titulo">🏜️ Seca</div>
     <div class="banner-seca" id="banner-seca" style="background:var(--nivel-normal);">
@@ -327,27 +294,15 @@
     </div>
     <div class="legenda">
       <span><i style="background:var(--seca-sem)"></i> Sem seca</span>
-      <span><i style="background:var(--seca-s0)"></i> Seca incipiente (S0)</span>
-      <span><i style="background:var(--seca-s2)"></i> Seca moderada (S2)</span>
-      <span><i style="background:var(--seca-s4)"></i> Seca severa (S4)</span>
+      <span><i style="background:var(--seca-s0)"></i> S0 — Incipiente</span>
+      <span><i style="background:var(--seca-s2)"></i> S2 — Moderada</span>
+      <span><i style="background:var(--seca-s4)"></i> S4 — Severa</span>
     </div>
-    <div class="filtro-global filtro-global-laranja">
-      <div class="filtro-segmento" id="seg-ano">
-        <button type="button" class="filtro-btn" onclick="toggleFiltro('ano')">Ano</button>
-        <div class="filtro-painel" id="painel-ano"></div>
-      </div>
-      <div class="filtro-segmento" id="seg-mes">
-        <button type="button" class="filtro-btn" onclick="toggleFiltro('mes')">Mês</button>
-        <div class="filtro-painel" id="painel-mes"></div>
-      </div>
-      <div class="filtro-segmento filtro-segmento-grande" id="seg-cidade">
-        <button type="button" class="filtro-btn" onclick="toggleFiltro('cidade')">Cidade</button>
-        <div class="filtro-painel" id="painel-cidade"></div>
-      </div>
-      <div class="filtro-segmento filtro-segmento-grande" id="seg-regiao">
-        <button type="button" class="filtro-btn" onclick="toggleFiltro('regiao')">Região</button>
-        <div class="filtro-painel" id="painel-regiao"></div>
-      </div>
+    <div class="filtro-global">
+      <div class="filtro-segmento"><button type="button" class="filtro-btn" onclick="toggleFiltro('ano')">Ano</button><div class="filtro-painel" id="painel-ano"></div></div>
+      <div class="filtro-segmento"><button type="button" class="filtro-btn" onclick="toggleFiltro('mes')">Mês</button><div class="filtro-painel" id="painel-mes"></div></div>
+      <div class="filtro-segmento filtro-segmento-grande"><button type="button" class="filtro-btn" onclick="toggleFiltro('cidade')">Cidade</button><div class="filtro-painel" id="painel-cidade"></div></div>
+      <div class="filtro-segmento filtro-segmento-grande"><button type="button" class="filtro-btn" onclick="toggleFiltro('regiao')">Região</button><div class="filtro-painel" id="painel-regiao"></div></div>
     </div>
     <div id="bullet-cidade"></div>
     <div class="graficos">
@@ -357,9 +312,11 @@
       </div>
     </div>
   </div>
+
+  <!-- CHUVA -->
   <div class="secao-painel secao-chuva">
     <div class="secao-painel-titulo">🌧️ Chuva</div>
-    <div class="banner-chuva" id="banner-chuva" style="background:var(--azul-marinho);">
+    <div class="banner-chuva" id="banner-chuva">
       <div>
         <div class="rotulo">Status de chuvas por estado</div>
         <div class="valor-linha">
@@ -371,31 +328,23 @@
     </div>
     <div class="legenda">
       <span><i style="background:var(--nivel-normal)"></i> Normal</span>
-      <span><i style="background:var(--nivel-perigo)"></i> Chuva (Perigo)</span>
-      <span><i style="background:var(--nivel-grande-perigo)"></i> Chuva forte (Grande perigo)</span>
-      <span><i style="background:var(--nivel-muito-grave)"></i> Temporal (Perigo muito grande)</span>
+      <span><i style="background:var(--nivel-perigo)"></i> Perigo</span>
+      <span><i style="background:var(--nivel-grande-perigo)"></i> Grande perigo</span>
+      <span><i style="background:var(--nivel-muito-grave)"></i> Perigo muito grande</span>
     </div>
     <div class="filtro-global filtro-global-azul">
-      <div class="filtro-segmento" id="seg-ano-chuva">
-        <button type="button" class="filtro-btn" onclick="toggleFiltroChuva('ano')">Ano</button>
-        <div class="filtro-painel" id="painel-ano-chuva"></div>
-      </div>
-      <div class="filtro-segmento" id="seg-mes-chuva">
-        <button type="button" class="filtro-btn" onclick="toggleFiltroChuva('mes')">Mês</button>
-        <div class="filtro-painel" id="painel-mes-chuva"></div>
-      </div>
-      <div class="filtro-segmento filtro-segmento-grande" id="seg-cidade-chuva">
-        <button type="button" class="filtro-btn" onclick="toggleFiltroChuva('cidade')">Cidade</button>
-        <div class="filtro-painel" id="painel-cidade-chuva"></div>
-      </div>
-      <div class="filtro-segmento filtro-segmento-grande" id="seg-regiao-chuva">
-        <button type="button" class="filtro-btn" onclick="toggleFiltroChuva('regiao')">Região</button>
-        <div class="filtro-painel" id="painel-regiao-chuva"></div>
-      </div>
+      <div class="filtro-segmento"><button type="button" class="filtro-btn" onclick="toggleFiltroChuva('ano')">Ano</button><div class="filtro-painel" id="painel-ano-chuva"></div></div>
+      <div class="filtro-segmento"><button type="button" class="filtro-btn" onclick="toggleFiltroChuva('mes')">Mês</button><div class="filtro-painel" id="painel-mes-chuva"></div></div>
+      <div class="filtro-segmento filtro-segmento-grande"><button type="button" class="filtro-btn" onclick="toggleFiltroChuva('cidade')">Cidade</button><div class="filtro-painel" id="painel-cidade-chuva"></div></div>
+      <div class="filtro-segmento filtro-segmento-grande"><button type="button" class="filtro-btn" onclick="toggleFiltroChuva('regiao')">Região</button><div class="filtro-painel" id="painel-regiao-chuva"></div></div>
     </div>
     <div class="modo-toggle">
       <button type="button" class="modo-btn" id="btn-modo-cidade" onclick="definirModoChuva('cidade')">Cidade</button>
       <button type="button" class="modo-btn" id="btn-modo-regiao" onclick="definirModoChuva('regiao')">Região</button>
+    </div>
+    <div class="calendario-wrap">
+      <div class="calendario-titulo">🗓️ Heatmap de precipitação diária (mm)</div>
+      <div id="calendario-heatmap"></div>
     </div>
     <div class="graficos">
       <div class="grafico-card">
@@ -403,508 +352,304 @@
         <canvas id="grafico-chuva-cidades"></canvas>
       </div>
       <div class="grafico-card">
-        <h3 id="titulo-grafico-serie">📈 Chuva diária</h3>
+        <h3 id="titulo-grafico-serie">📈 Chuva diária com média</h3>
         <canvas id="grafico-chuva-serie"></canvas>
       </div>
     </div>
   </div>
 </div>
-<!-- ===== RODAPÉ COM LOGO ===== -->
+
 <footer class="footer-logo">
-  <!-- Substitua pelo link raw do seu arquivo no GitHub:
-       https://raw.githubusercontent.com/seu-usuario/seu-repo/main/logo.png -->
-  <img src="https://raw.githubusercontent.com/scgoncalves1-cmd/Painel-Secas-Cheias-ORIGINAL/main/logo.png" alt="Logo do projeto Entre Secas e Cheias">
+  <img src="https://raw.githubusercontent.com/scgoncalves1-cmd/Painel-Secas-Cheias-ORIGINAL/main/logo.png" alt="Logo do projeto">
 </footer>
 
 <script>
-const ID_PLANILHA = "1HPImo850i_Bzcy0O-hK1_-SPJq6pAv65fEHpD6qr22k";
-function urlCsv(nomeAba) {
-  return "https://docs.google.com/spreadsheets/d/" + ID_PLANILHA +
-    "/gviz/tq?tqx=out:csv&sheet=" + encodeURIComponent(nomeAba);
+const ID_PLANILHA="1HPImo850i_Bzcy0O-hK1_-SPJq6pAv65fEHpD6qr22k";
+function urlCsv(n){return"https://docs.google.com/spreadsheets/d/"+ID_PLANILHA+"/gviz/tq?tqx=out:csv&sheet="+encodeURIComponent(n);}
+function parseCSV(txt){
+  const ls=[];let c="",l=[],q=false;
+  for(let i=0;i<txt.length;i++){const ch=txt[i],nx=txt[i+1];
+    if(q){if(ch==='"'&&nx==='"'){c+='"';i++;}else if(ch==='"'){q=false;}else c+=ch;}
+    else{if(ch==='"')q=true;else if(ch===','){l.push(c);c="";}else if(ch==='\n'){l.push(c);c="";ls.push(l);l=[];}else if(ch!=='\r')c+=ch;}}
+  if(c.length>0||l.length>0){l.push(c);ls.push(l);}
+  if(!ls.length)return[];
+  const cab=ls[0].map(h=>h.trim());
+  return ls.slice(1).filter(l=>l.length>1||l[0]!=="").map(l=>{const o={};cab.forEach((h,i)=>o[h]=l[i]!==undefined?l[i]:"");return o;});
 }
-function parseCSV(texto) {
-  const linhas = [];
-  let campo = "", linha = [], dentroAspas = false;
-  for (let i = 0; i < texto.length; i++) {
-    const c = texto[i], prox = texto[i + 1];
-    if (dentroAspas) {
-      if (c === '"' && prox === '"') { campo += '"'; i++; }
-      else if (c === '"') { dentroAspas = false; }
-      else { campo += c; }
-    } else {
-      if (c === '"') dentroAspas = true;
-      else if (c === ',') { linha.push(campo); campo = ""; }
-      else if (c === '\n') { linha.push(campo); campo = ""; linhas.push(linha); linha = []; }
-      else if (c === '\r') { /* ignora */ }
-      else { campo += c; }
-    }
-  }
-  if (campo.length > 0 || linha.length > 0) { linha.push(campo); linhas.push(linha); }
-  if (!linhas.length) return [];
-  const cab = linhas[0].map(h => h.trim());
-  return linhas.slice(1).filter(l => l.length > 1 || l[0] !== "").map(l => {
-    const obj = {};
-    cab.forEach((h, idx) => obj[h] = (l[idx] !== undefined ? l[idx] : ""));
-    return obj;
-  });
+async function buscarAba(n){const r=await fetch(urlCsv(n));if(!r.ok)throw new Error("HTTP "+r.status);return parseCSV(await r.text());}
+
+let dadosClimaticos=[],alertas=[],carregado=false,ufAtual="RS";
+let graficoSeca,graficoChuvaCidades,graficoChuvaSerie,graficoGauge;
+let anosFiltro={todos:true,selecionados:new Set()};
+let mesesFiltro={todos:true,selecionados:new Set()};
+let cidadeFiltro={todos:true,cidade:null};
+let regiaoFiltro={todos:true,regiao:null};
+let painelFiltroAberto=null,painelFiltroAbertoChuva=null;
+let modoAgrupamentoChuva="cidade",darkMode=false;
+
+const NM=["01","02","03","04","05","06","07","08","09","10","11","12"];
+const LM={};["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"].forEach((v,i)=>LM[NM[i]]=v);
+const LMF={};["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"].forEach((v,i)=>LMF[NM[i]]=v);
+
+function gv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function corCheia(n){if(n&&n.indexOf("muito grande")!==-1)return gv("--nivel-muito-grave");if(n&&n.indexOf("Grande perigo")!==-1)return gv("--nivel-grande-perigo");if(n&&n.indexOf("Perigo")!==-1)return gv("--nivel-perigo");return gv("--nivel-normal");}
+function corSeca(n){if(!n)return gv("--seca-sem");if(n.indexOf("S4")!==-1)return gv("--seca-s4");if(n.indexOf("S3")!==-1)return gv("--seca-s3");if(n.indexOf("S2")!==-1)return gv("--seca-s2");if(n.indexOf("S1")!==-1)return gv("--seca-s1");if(n.indexOf("S0")!==-1)return gv("--seca-s0");return gv("--seca-sem");}
+function corAzul(v,mn,mx){const t=mx>mn?(v-mn)/(mx-mn):1;const a=[198,224,245],b=[8,48,107];return"rgb("+a.map((x,i)=>Math.round(x+(b[i]-x)*t)).join(",")+")";}
+function corHeat(v,mx){if(!v||v===0)return darkMode?"#2a3040":"#e8e2d4";const t=Math.min(v/mx,1);if(t<.25)return"#cce5f7";if(t<.5)return"#5aaee0";if(t<.75)return"#1e6fbf";return"#0d2b6b";}
+
+function toggleDark(){
+  darkMode=!darkMode;
+  document.body.classList.toggle("dark",darkMode);
+  document.getElementById("btn-dark").textContent=darkMode?"☀️ Claro":"🌙 Escuro";
+  if(carregado)atualizarGraficos();
 }
-async function buscarAba(nomeAba) {
-  const resp = await fetch(urlCsv(nomeAba));
-  if (!resp.ok) throw new Error("HTTP " + resp.status);
-  const texto = await resp.text();
-  return parseCSV(texto);
-}
-let dadosClimaticos = [];
-let alertas = [];
-let carregado = false;
-let ufAtual = "RS";
-let graficoSeca, graficoChuvaCidades, graficoChuvaSerie;
-let anosFiltro = { todos: true, selecionados: new Set() };
-let mesesFiltro = { todos: true, selecionados: new Set() };
-let cidadeFiltro = { todos: true, cidade: null };
-let regiaoFiltro = { todos: true, regiao: null };
-let painelFiltroAberto = null;
-let painelFiltroAbertoChuva = null;
-let modoAgrupamentoChuva = "cidade";
-const NOMES_MESES = ["01","02","03","04","05","06","07","08","09","10","11","12"];
-const LABELS_MESES = { "01":"Janeiro","02":"Fevereiro","03":"Março","04":"Abril","05":"Maio","06":"Junho",
-  "07":"Julho","08":"Agosto","09":"Setembro","10":"Outubro","11":"Novembro","12":"Dezembro" };
-function corNivelCheia(nivel) {
-  if (nivel && nivel.indexOf("muito grande") !== -1) return getVar("--nivel-muito-grave");
-  if (nivel && nivel.indexOf("Grande perigo") !== -1) return getVar("--nivel-grande-perigo");
-  if (nivel && nivel.indexOf("Perigo") !== -1) return getVar("--nivel-perigo");
-  return getVar("--nivel-normal");
-}
-function corNivelSeca(nivel) {
-  if (!nivel) return getVar("--seca-sem");
-  if (nivel.indexOf("S4") !== -1) return getVar("--seca-s4");
-  if (nivel.indexOf("S3") !== -1) return getVar("--seca-s3");
-  if (nivel.indexOf("S2") !== -1) return getVar("--seca-s2");
-  if (nivel.indexOf("S1") !== -1) return getVar("--seca-s1");
-  if (nivel.indexOf("S0") !== -1) return getVar("--seca-s0");
-  return getVar("--seca-sem");
-}
-function getVar(nome) {
-  return getComputedStyle(document.documentElement).getPropertyValue(nome).trim();
-}
-function corGradienteAzul(valor, minV, maxV) {
-  const t = maxV > minV ? (valor - minV) / (maxV - minV) : 1;
-  const claro = [198, 224, 245];
-  const escuro = [8, 48, 107];
-  const rgb = claro.map((v, i) => Math.round(v + (escuro[i] - v) * t));
-  return "rgb(" + rgb.join(",") + ")";
-}
-function mostrarCapa() {
-  document.getElementById("view-capa").style.display = "block";
+function toggleOds(id){const a=document.getElementById(id),ab=a.classList.contains("aberta");document.querySelectorAll(".ods-aba").forEach(e=>e.classList.remove("aberta"));if(!ab)a.classList.add("aberta");}
+
+function mostrarCapa(){
+  document.getElementById("view-capa").style.display="block";
   document.getElementById("view-painel").classList.remove("ativo");
   document.getElementById("btn-nav-capa").classList.add("ativo");
-  location.hash = "";
+  location.hash="";
 }
-function abrirPainel(uf) {
-  ufAtual = uf;
-  anosFiltro = { todos: true, selecionados: new Set() };
-  mesesFiltro = { todos: true, selecionados: new Set() };
-  cidadeFiltro = { todos: true, cidade: null };
-  regiaoFiltro = { todos: true, regiao: null };
-  painelFiltroAberto = null;
-  painelFiltroAbertoChuva = null;
-  modoAgrupamentoChuva = "cidade";
-  document.getElementById("view-capa").style.display = "none";
+function abrirPainel(uf){
+  ufAtual=uf;
+  anosFiltro={todos:true,selecionados:new Set()};mesesFiltro={todos:true,selecionados:new Set()};
+  cidadeFiltro={todos:true,cidade:null};regiaoFiltro={todos:true,regiao:null};
+  painelFiltroAberto=null;painelFiltroAbertoChuva=null;modoAgrupamentoChuva="cidade";
+  document.getElementById("view-capa").style.display="none";
   document.getElementById("view-painel").classList.add("ativo");
   document.getElementById("btn-nav-capa").classList.remove("ativo");
-  document.getElementById("painel-titulo").textContent =
-    "Painel — " + (uf === "RS" ? "Rio Grande do Sul" : "São Paulo");
-  location.hash = "painel/" + uf;
-  const mapa = uf === "RS" ? "rs.png" : "sp.png";
-  document.getElementById("view-painel").style.setProperty("--mapa-bg", "url(" + mapa + ")");
+  document.getElementById("painel-titulo").textContent="Painel — "+(uf==="RS"?"Rio Grande do Sul":"São Paulo");
+  location.hash="painel/"+uf;
   renderizarPainel();
 }
-document.getElementById("btn-nav-capa").addEventListener("click", mostrarCapa);
-document.addEventListener("click", function (e) {
-  if (!e.target.closest(".filtro-global-laranja")) fecharFiltros();
-  if (!e.target.closest(".filtro-global-azul")) fecharFiltrosChuva();
-});
-async function carregarDados() {
-  try {
-    const [dc, al] = await Promise.all([
-      buscarAba("dados_climaticos"),
-      buscarAba("alertas"),
-    ]);
-    dadosClimaticos = dc;
-    alertas = al;
-    carregado = true;
-  } catch (e) {
-    document.getElementById("painel-config-aviso").innerHTML =
-      '<div class="aviso-config">⚠️ Não consegui carregar os dados da planilha. ' +
-      'Confira se ela está compartilhada como <b>"Qualquer pessoa com o link — Leitor"</b> ' +
-      '(botão Compartilhar, no canto superior direito da planilha) e se o ID em ' +
-      '<code>ID_PLANILHA</code> está correto. Detalhe técnico: ' + e.message + '</div>';
-    console.error(e);
-  }
+document.getElementById("btn-nav-capa").addEventListener("click",mostrarCapa);
+document.addEventListener("click",function(e){if(!e.target.closest(".filtro-global:not(.filtro-global-azul)"))fecharFiltros();if(!e.target.closest(".filtro-global-azul"))fecharFiltrosChuva();});
+
+async function carregarDados(){
+  try{const[dc,al]=await Promise.all([buscarAba("dados_climaticos"),buscarAba("alertas")]);dadosClimaticos=dc;alertas=al;carregado=true;}
+  catch(e){document.getElementById("painel-config-aviso").innerHTML='<div class="aviso-config">⚠️ Não foi possível carregar os dados. Verifique se a planilha está compartilhada como "Qualquer pessoa com o link — Leitor". Detalhe: '+e.message+'</div>';console.error(e);}
 }
-function renderizarPainel() {
-  if (!carregado) return;
-  renderizarBannerSeca();
-  renderizarPainelAno();
-  renderizarPainelMes();
-  renderizarPainelCidade();
-  renderizarPainelRegiao();
-  renderizarBulletCidade();
-  atualizarBotoesModo();
-  renderizarGraficoSeca();
-  renderizarGraficosChuva();
-  document.getElementById("painel-atualizado").textContent =
-    "Atualizado em " + new Date().toLocaleString("pt-BR");
+
+function passaFiltroData(d){const a=String(d).slice(0,4),m=String(d).slice(5,7);return(anosFiltro.todos||anosFiltro.selecionados.has(a))&&(mesesFiltro.todos||mesesFiltro.selecionados.has(m));}
+function cidadesDisp(){return alertas.filter(a=>a.tipo==="Cheia"&&a.uf===ufAtual).map(a=>a.local).sort((a,b)=>a.localeCompare(b));}
+function regioesDisp(){const s=new Set();alertas.filter(a=>a.tipo==="Cheia"&&a.uf===ufAtual).forEach(a=>{if(a.regiao)s.add(a.regiao);});return Array.from(s).sort((a,b)=>a.localeCompare(b));}
+function anosDisp(){const s=new Set(),cu=new Set(cidadesDisp());dadosClimaticos.forEach(r=>{const ok=(r.fonte==="MonitorDeSecas-ANA"&&r.estacao_codigo===ufAtual)||(r.fonte==="CEMADEN"&&cu.has(r.estacao_codigo));if(!ok)return;const a=String(r.data).slice(0,4);if(a.length===4&&!isNaN(a))s.add(a);});return Array.from(s).sort();}
+
+function renderizarPainel(){
+  if(!carregado)return;
+  renderizarBannerSeca();renderizarPainelAno();renderizarPainelMes();renderizarPainelCidade();renderizarPainelRegiao();
+  renderizarBulletCidade();atualizarBotoesModo();renderizarKPIs();renderizarGauge();renderizarGraficoSeca();renderizarGraficosChuva();
+  document.getElementById("painel-atualizado").textContent="Atualizado em "+new Date().toLocaleString("pt-BR");
 }
-function renderizarBannerSeca() {
-  const linha = alertas.find(a => a.tipo === "Seca" && a.uf === ufAtual);
-  const banner = document.getElementById("banner-seca");
-  const valor = document.getElementById("banner-seca-valor");
-  const ref = document.getElementById("banner-seca-ref");
-  if (!linha) {
-    banner.style.background = getVar("--seca-sem");
-    valor.textContent = "Sem dados de seca ainda";
-    ref.textContent = "";
-    return;
-  }
-  banner.style.background = corNivelSeca(linha.nivel);
-  valor.textContent = linha.nivel + " — " + ufAtual;
-  ref.textContent = (linha.referencia || "") + " · atualizado " + (linha.atualizado_em || "");
-}
-function toggleFiltro(nome) {
-  painelFiltroAberto = painelFiltroAberto === nome ? null : nome;
-  atualizarPaineisFiltro();
-}
-function fecharFiltros() {
-  painelFiltroAberto = null;
-  atualizarPaineisFiltro();
-}
-function atualizarPaineisFiltro() {
-  document.getElementById("painel-ano").classList.toggle("aberto", painelFiltroAberto === "ano");
-  document.getElementById("painel-mes").classList.toggle("aberto", painelFiltroAberto === "mes");
-  document.getElementById("painel-cidade").classList.toggle("aberto", painelFiltroAberto === "cidade");
-  document.getElementById("painel-regiao").classList.toggle("aberto", painelFiltroAberto === "regiao");
-}
-function toggleFiltroChuva(nome) {
-  painelFiltroAbertoChuva = painelFiltroAbertoChuva === nome ? null : nome;
-  atualizarPaineisFiltroChuva();
-}
-function fecharFiltrosChuva() {
-  painelFiltroAbertoChuva = null;
-  atualizarPaineisFiltroChuva();
-}
-function atualizarPaineisFiltroChuva() {
-  document.getElementById("painel-ano-chuva").classList.toggle("aberto", painelFiltroAbertoChuva === "ano");
-  document.getElementById("painel-mes-chuva").classList.toggle("aberto", painelFiltroAbertoChuva === "mes");
-  document.getElementById("painel-cidade-chuva").classList.toggle("aberto", painelFiltroAbertoChuva === "cidade");
-  document.getElementById("painel-regiao-chuva").classList.toggle("aberto", painelFiltroAbertoChuva === "regiao");
-}
-function cidadesDisponiveis() {
-  return alertas.filter(a => a.tipo === "Cheia" && a.uf === ufAtual)
-    .map(a => a.local).sort((a, b) => a.localeCompare(b));
-}
-function regioesDisponiveis() {
-  const set = new Set();
-  alertas.filter(a => a.tipo === "Cheia" && a.uf === ufAtual).forEach(a => {
-    if (a.regiao) set.add(a.regiao);
+
+function renderizarKPIs(){
+  let totalChuva=0;const mesesSet=new Set();const cu=new Set(cidadesDisp());
+  dadosClimaticos.forEach(r=>{
+    if(r.fonte!=="CEMADEN"||r.variavel!=="precipitacao_mm"||!passaFiltroData(r.data))return;
+    if(!cu.has(r.estacao_codigo))return;
+    const info=alertas.find(a=>a.tipo==="Cheia"&&a.local===r.estacao_codigo);
+    if(!info||info.uf!==ufAtual)return;
+    if(!cidadeFiltro.todos&&r.estacao_codigo!==cidadeFiltro.cidade)return;
+    if(!regiaoFiltro.todos&&(info.regiao||"")!==regiaoFiltro.regiao)return;
+    totalChuva+=parseFloat(r.valor)||0;mesesSet.add(String(r.data).slice(0,7));
   });
-  return Array.from(set).sort((a, b) => a.localeCompare(b));
+  const sd=dadosClimaticos.filter(r=>r.fonte==="MonitorDeSecas-ANA"&&r.estacao_codigo===ufAtual&&passaFiltroData(r.data)&&r.variavel==="seca_s0s4").sort((a,b)=>a.data>b.data?1:-1);
+  const pctSeca=sd.length?(parseFloat(sd[sd.length-1].valor)||0):null;
+  const emAlerta=alertas.filter(a=>a.tipo==="Cheia"&&a.uf===ufAtual&&a.nivel&&a.nivel!=="Normal"&&a.nivel!=="").length;
+  document.getElementById("kpi-chuva").textContent=totalChuva>0?Math.round(totalChuva)+" mm":"—";
+  document.getElementById("kpi-seca").textContent=pctSeca!==null?pctSeca.toFixed(1)+"%":"—";
+  document.getElementById("kpi-alertas").textContent=emAlerta||"—";
+  document.getElementById("kpi-meses").textContent=mesesSet.size||"—";
 }
-function anosDisponiveis() {
-  const set = new Set();
-  const cidadesUf = new Set(cidadesDisponiveis());
-  dadosClimaticos.forEach(r => {
-    const pertenceUf =
-      (r.fonte === "MonitorDeSecas-ANA" && r.estacao_codigo === ufAtual) ||
-      (r.fonte === "CEMADEN" && cidadesUf.has(r.estacao_codigo));
-    if (!pertenceUf) return;
-    const ano = String(r.data).slice(0, 4);
-    if (ano.length === 4 && !isNaN(ano)) set.add(ano);
-  });
-  return Array.from(set).sort();
-}
-function renderizarPainelAno() {
-  const anos = anosDisponiveis();
-  let html = '<div class="filtro-item todos" onclick="marcarAnoTodos()">' +
-    (anosFiltro.todos ? "☑" : "☐") + ' Todos</div>';
-  html += anos.map(a => '<div class="filtro-item" onclick="toggleAno(\'' + a + '\')">' +
-    ((!anosFiltro.todos && anosFiltro.selecionados.has(a)) ? "☑" : "☐") + ' ' + a + '</div>').join("");
-  const conteudo = html || '<div class="filtro-item">Sem dados ainda</div>';
-  ["painel-ano", "painel-ano-chuva"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = conteudo;
+
+function renderizarGauge(){
+  const sd=dadosClimaticos.filter(r=>r.fonte==="MonitorDeSecas-ANA"&&r.estacao_codigo===ufAtual&&r.variavel==="seca_s0s4").sort((a,b)=>a.data>b.data?1:-1);
+  const pct=sd.length?(parseFloat(sd[sd.length-1].valor)||0):0;
+  const em=alertas.filter(a=>a.tipo==="Cheia"&&a.uf===ufAtual&&a.nivel&&a.nivel!=="Normal"&&a.nivel!=="").length;
+  const score=Math.round(Math.min(pct*0.6+Math.min(em*5,40),100));
+  let cor,rot;
+  if(score<25){cor="#4caf50";rot="Baixo";}else if(score<50){cor="#f1c232";rot="Moderado";}else if(score<75){cor="#e69138";rot="Alto";}else{cor="#c0392b";rot="Crítico";}
+  document.getElementById("gauge-badge").textContent="Risco "+rot+" ("+score+"/100)";
+  document.getElementById("gauge-badge").style.background=cor;
+  if(graficoGauge)graficoGauge.destroy();
+  graficoGauge=new Chart(document.getElementById("grafico-gauge"),{
+    type:"doughnut",
+    data:{datasets:[{data:[score,100-score],backgroundColor:[cor,darkMode?"#2a3040":"#e8e2d4"],borderWidth:0,circumference:270,rotation:225}]},
+    options:{responsive:true,cutout:"72%",plugins:{legend:{display:false},tooltip:{enabled:false}}},
   });
 }
-function marcarAnoTodos() {
-  anosFiltro.todos = true; anosFiltro.selecionados.clear();
-  renderizarPainelAno(); atualizarGraficos();
+
+function renderizarBannerSeca(){
+  const l=alertas.find(a=>a.tipo==="Seca"&&a.uf===ufAtual);
+  const bn=document.getElementById("banner-seca"),vl=document.getElementById("banner-seca-valor"),rf=document.getElementById("banner-seca-ref");
+  if(!l){bn.style.background=gv("--seca-sem");vl.textContent="Sem dados de seca ainda";rf.textContent="";return;}
+  bn.style.background=corSeca(l.nivel);vl.textContent=l.nivel+" — "+ufAtual;rf.textContent=(l.referencia||"")+" · atualizado "+(l.atualizado_em||"");
 }
-function toggleAno(ano) {
-  anosFiltro.todos = false;
-  if (anosFiltro.selecionados.has(ano)) anosFiltro.selecionados.delete(ano);
-  else anosFiltro.selecionados.add(ano);
-  if (anosFiltro.selecionados.size === 0) anosFiltro.todos = true;
-  renderizarPainelAno(); atualizarGraficos();
+
+function toggleFiltro(n){painelFiltroAberto=painelFiltroAberto===n?null:n;["ano","mes","cidade","regiao"].forEach(x=>document.getElementById("painel-"+x).classList.toggle("aberto",painelFiltroAberto===x));}
+function fecharFiltros(){painelFiltroAberto=null;["ano","mes","cidade","regiao"].forEach(x=>document.getElementById("painel-"+x).classList.remove("aberto"));}
+function toggleFiltroChuva(n){painelFiltroAbertoChuva=painelFiltroAbertoChuva===n?null:n;["ano","mes","cidade","regiao"].forEach(x=>document.getElementById("painel-"+x+"-chuva").classList.toggle("aberto",painelFiltroAbertoChuva===x));}
+function fecharFiltrosChuva(){painelFiltroAbertoChuva=null;["ano","mes","cidade","regiao"].forEach(x=>document.getElementById("painel-"+x+"-chuva").classList.remove("aberto"));}
+
+function renderizarPainelAno(){
+  const anos=anosDisp();
+  let h='<div class="filtro-item todos" onclick="marcarAnoTodos()">'+(anosFiltro.todos?"☑":"☐")+' Todos</div>';
+  h+=anos.map(a=>'<div class="filtro-item" onclick="toggleAno(\''+a+'\')">'+((!anosFiltro.todos&&anosFiltro.selecionados.has(a))?"☑":"☐")+' '+a+'</div>').join("");
+  ["painel-ano","painel-ano-chuva"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=h||'<div class="filtro-item">Sem dados</div>';});
 }
-function renderizarPainelMes() {
-  let html = '<div class="filtro-item todos" onclick="marcarMesTodos()">' +
-    (mesesFiltro.todos ? "☑" : "☐") + ' Todos</div>';
-  html += NOMES_MESES.map(m => '<div class="filtro-item" onclick="toggleMes(\'' + m + '\')">' +
-    ((!mesesFiltro.todos && mesesFiltro.selecionados.has(m)) ? "☑" : "☐") + ' ' + LABELS_MESES[m] + '</div>').join("");
-  ["painel-mes", "painel-mes-chuva"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = html;
+function marcarAnoTodos(){anosFiltro.todos=true;anosFiltro.selecionados.clear();renderizarPainelAno();atualizarGraficos();}
+function toggleAno(a){anosFiltro.todos=false;anosFiltro.selecionados.has(a)?anosFiltro.selecionados.delete(a):anosFiltro.selecionados.add(a);if(!anosFiltro.selecionados.size)anosFiltro.todos=true;renderizarPainelAno();atualizarGraficos();}
+
+function renderizarPainelMes(){
+  let h='<div class="filtro-item todos" onclick="marcarMesTodos()">'+(mesesFiltro.todos?"☑":"☐")+' Todos</div>';
+  h+=NM.map(m=>'<div class="filtro-item" onclick="toggleMes(\''+m+'\')">'+((!mesesFiltro.todos&&mesesFiltro.selecionados.has(m))?"☑":"☐")+' '+LMF[m]+'</div>').join("");
+  ["painel-mes","painel-mes-chuva"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=h;});
+}
+function marcarMesTodos(){mesesFiltro.todos=true;mesesFiltro.selecionados.clear();renderizarPainelMes();atualizarGraficos();}
+function toggleMes(m){mesesFiltro.todos=false;mesesFiltro.selecionados.has(m)?mesesFiltro.selecionados.delete(m):mesesFiltro.selecionados.add(m);if(!mesesFiltro.selecionados.size)mesesFiltro.todos=true;renderizarPainelMes();atualizarGraficos();}
+
+function renderizarPainelCidade(){
+  const cs=cidadesDisp();
+  let h='<div class="filtro-item todos" onclick="marcarCidadeTodos()">'+(cidadeFiltro.todos?"●":"○")+' Todos</div>';
+  h+=cs.map(c=>'<div class="filtro-item" onclick="selecionarCidadeFiltro(\''+c.replace(/'/g,"\\'")+'\')">'+  ((!cidadeFiltro.todos&&cidadeFiltro.cidade===c)?"●":"○")+' '+c+'</div>').join("");
+  ["painel-cidade","painel-cidade-chuva"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=h||'<div class="filtro-item">Sem cidades</div>';});
+}
+function marcarCidadeTodos(){cidadeFiltro.todos=true;cidadeFiltro.cidade=null;renderizarPainelCidade();atualizarGraficos();}
+function selecionarCidadeFiltro(c){cidadeFiltro.todos=false;cidadeFiltro.cidade=c;renderizarPainelCidade();atualizarGraficos();}
+
+function renderizarPainelRegiao(){
+  const rs=regioesDisp();
+  let h='<div class="filtro-item todos" onclick="marcarRegiaoTodos()">'+(regiaoFiltro.todos?"●":"○")+' Todos</div>';
+  h+=rs.map(r=>'<div class="filtro-item" onclick="selecionarRegiaoFiltro(\''+r.replace(/'/g,"\\'")+'\')">'+  ((!regiaoFiltro.todos&&regiaoFiltro.regiao===r)?"●":"○")+' '+r+'</div>').join("");
+  ["painel-regiao","painel-regiao-chuva"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=h||'<div class="filtro-item">Sem regiões — preencha as abas na planilha.</div>';});
+}
+function marcarRegiaoTodos(){regiaoFiltro.todos=true;regiaoFiltro.regiao=null;renderizarPainelRegiao();atualizarGraficos();}
+function selecionarRegiaoFiltro(r){regiaoFiltro.todos=false;regiaoFiltro.regiao=r;renderizarPainelRegiao();atualizarGraficos();}
+
+function renderizarBulletCidade(){
+  const b=document.getElementById("bullet-cidade");
+  if(cidadeFiltro.todos||!cidadeFiltro.cidade){b.innerHTML='<div class="sem-dados">Selecione uma cidade no filtro acima para ver o status dela.</div>';return;}
+  const l=alertas.find(a=>a.tipo==="Cheia"&&a.uf===ufAtual&&a.local===cidadeFiltro.cidade);
+  if(!l){b.innerHTML='<div class="sem-dados">Sem dados de cheia para essa cidade ainda.</div>';return;}
+  const cor=corCheia(l.nivel);
+  b.innerHTML='<div class="card-mini" style="border-left-color:'+cor+'"><div class="cidade">'+l.local+'</div><div class="valor">'+l.referencia+' · '+l.fonte+'</div><div class="nivel" style="color:'+cor+'">'+l.nivel+'</div></div>';
+}
+
+function atualizarGraficos(){renderizarBulletCidade();renderizarKPIs();renderizarGauge();renderizarGraficoSeca();renderizarGraficosChuva();}
+
+function renderizarGraficoSeca(){
+  const pm={};
+  dadosClimaticos.forEach(r=>{
+    if(r.fonte!=="MonitorDeSecas-ANA"||r.estacao_codigo!==ufAtual||!passaFiltroData(r.data))return;
+    const mes=String(r.data).slice(0,7),cat=String(r.variavel).replace("seca_","");
+    if(!pm[mes])pm[mes]={s0s4:0,s1s4:0,s2s4:0,s3s4:0,s4:0};
+    if(pm[mes][cat]!==undefined)pm[mes][cat]=parseFloat(r.valor)||0;
+  });
+  const meses=Object.keys(pm).sort();
+  const cats=["s0s4","s1s4","s2s4","s3s4","s4"];
+  const lb={s0s4:"S0-S4",s1s4:"S1-S4",s2s4:"S2-S4",s3s4:"S3-S4",s4:"S4"};
+  const cr={s0s4:gv("--seca-s0"),s1s4:gv("--seca-s1"),s2s4:gv("--seca-s2"),s3s4:gv("--seca-s3"),s4:gv("--seca-s4")};
+  const datasets=cats.map(c=>({label:lb[c],data:meses.map(m=>pm[m][c]),borderColor:cr[c],backgroundColor:cr[c]+"55",fill:true,tension:.25,pointRadius:3,pointHoverRadius:6}));
+  const tc=darkMode?"#dde1ea":"#2c2a25",sc=darkMode?"#8a90a0":"#6b6559",gc=darkMode?"#2a3040":"#e7e1d2";
+  if(graficoSeca)graficoSeca.destroy();
+  graficoSeca=new Chart(document.getElementById("grafico-seca"),{
+    type:"line",data:{labels:meses,datasets},
+    options:{responsive:true,plugins:{legend:{position:"bottom",labels:{color:tc}},tooltip:{callbacks:{label:c=>" "+c.dataset.label+": "+c.parsed.y.toFixed(1)+"%",title:i=>"📅 "+i[0].label}}},
+      scales:{y:{title:{display:true,text:"% da área",color:sc},ticks:{color:sc},grid:{color:gc}},x:{ticks:{color:sc},grid:{color:gc}}}}
   });
 }
-function marcarMesTodos() {
-  mesesFiltro.todos = true; mesesFiltro.selecionados.clear();
-  renderizarPainelMes(); atualizarGraficos();
+
+function rankCheia(n){if(!n)return 0;if(n.indexOf("muito grande")!==-1)return 3;if(n.indexOf("Grande perigo")!==-1)return 2;if(n.indexOf("Perigo")!==-1)return 1;return 0;}
+function renderizarBannerChuva(alvo){
+  const dot=document.getElementById("banner-chuva-dot"),vl=document.getElementById("banner-chuva-valor"),rf=document.getElementById("banner-chuva-ref");
+  if(!alvo){dot.style.background=gv("--nivel-normal");vl.textContent="Sem dados ainda";rf.textContent="";return;}
+  const ls=alertas.filter(a=>a.tipo==="Cheia"&&a.uf===ufAtual);let pior=null;
+  if(modoAgrupamentoChuva==="regiao"){ls.forEach(l=>{if((l.regiao||"")!==alvo)return;if(!pior||rankCheia(l.nivel)>rankCheia(pior.nivel))pior=l;});}
+  else pior=ls.find(l=>l.local===alvo)||null;
+  if(!pior){dot.style.background=gv("--nivel-normal");vl.textContent="Sem dados para "+alvo;rf.textContent="";return;}
+  const cor=corCheia(pior.nivel);dot.style.background=cor;vl.textContent=pior.nivel+" — "+alvo;rf.textContent=(pior.referencia||"")+" · atualizado "+(pior.atualizado_em||"");
 }
-function toggleMes(mes) {
-  mesesFiltro.todos = false;
-  if (mesesFiltro.selecionados.has(mes)) mesesFiltro.selecionados.delete(mes);
-  else mesesFiltro.selecionados.add(mes);
-  if (mesesFiltro.selecionados.size === 0) mesesFiltro.todos = true;
-  renderizarPainelMes(); atualizarGraficos();
+
+function renderizarHeatmap(regs){
+  const wrap=document.getElementById("calendario-heatmap");
+  const pd={};regs.forEach(r=>{pd[r.dia]=(pd[r.dia]||0)+r.valor;});
+  if(!Object.keys(pd).length){wrap.innerHTML='<div class="sem-dados">Sem dados para o período selecionado.</div>';return;}
+  const maxV=Math.max(...Object.values(pd));
+  const pm={};Object.keys(pd).sort().forEach(dia=>{const mes=dia.slice(0,7);if(!pm[mes])pm[mes]={};pm[mes][parseInt(dia.slice(8,10))]=pd[dia];});
+  const meses=Object.keys(pm).sort();
+  let html='<div class="calendario-grid"><div class="cal-col"><div class="cal-label-mes"></div>';
+  for(let d=1;d<=31;d++)html+='<div class="cal-label-dia">'+(d%5===1?d:"")+'</div>';
+  html+='</div>';
+  meses.forEach(mes=>{
+    const[ano,m]=mes.split("-"),dim=new Date(parseInt(ano),parseInt(m),0).getDate();
+    html+='<div class="cal-col"><div class="cal-label-mes">'+LM[m]+(meses.length>12?" "+ano.slice(2):"")+'</div>';
+    for(let d=1;d<=31;d++){
+      if(d>dim){html+='<div class="cal-cell" style="background:transparent;cursor:default;pointer-events:none"></div>';continue;}
+      const v=pm[mes][d]||0,cor=corHeat(v,maxV),tt=v>0?d+"/"+m+"/"+ano+": "+v.toFixed(1)+" mm":d+"/"+m+"/"+ano+": sem chuva";
+      html+='<div class="cal-cell" style="background:'+cor+'" title="'+tt+'"></div>';
+    }
+    html+='</div>';
+  });
+  html+='</div><div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:.7rem;color:var(--texto-suave)"><span>Menos</span>';
+  ["#e8e2d4","#cce5f7","#5aaee0","#1e6fbf","#0d2b6b"].forEach(c=>{html+='<span style="width:14px;height:14px;background:'+c+';border-radius:3px;display:inline-block"></span>';});
+  html+='<span>Mais chuva</span></div>';
+  wrap.innerHTML=html;
 }
-function renderizarPainelCidade() {
-  const cidades = cidadesDisponiveis();
-  let html = '<div class="filtro-item todos" onclick="marcarCidadeTodos()">' +
-    (cidadeFiltro.todos ? "●" : "○") + ' Todos</div>';
-  html += cidades.map(c => '<div class="filtro-item" onclick="selecionarCidadeFiltro(\'' + c.replace(/'/g, "\\'") + '\')">' +
-    ((!cidadeFiltro.todos && cidadeFiltro.cidade === c) ? "●" : "○") + ' ' + c + '</div>').join("");
-  const conteudo = html || '<div class="filtro-item">Sem cidades ainda</div>';
-  ["painel-cidade", "painel-cidade-chuva"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = conteudo;
+
+function definirModoChuva(m){modoAgrupamentoChuva=m;atualizarBotoesModo();renderizarGraficosChuva();}
+function atualizarBotoesModo(){
+  document.getElementById("btn-modo-cidade").classList.toggle("ativo",modoAgrupamentoChuva==="cidade");
+  document.getElementById("btn-modo-regiao").classList.toggle("ativo",modoAgrupamentoChuva==="regiao");
+  document.getElementById("titulo-grafico-cidades").textContent=modoAgrupamentoChuva==="regiao"?"🌧️ Chuva acumulada por região":"🌧️ Chuva acumulada por cidade";
+}
+
+function renderizarGraficosChuva(){
+  const regs=[];
+  dadosClimaticos.forEach(r=>{
+    if(r.fonte!=="CEMADEN"||r.variavel!=="precipitacao_mm"||!passaFiltroData(r.data))return;
+    const info=alertas.find(a=>a.tipo==="Cheia"&&a.local===r.estacao_codigo);
+    if(!info||info.uf!==ufAtual)return;
+    if(!cidadeFiltro.todos&&r.estacao_codigo!==cidadeFiltro.cidade)return;
+    if(!regiaoFiltro.todos&&(info.regiao||"")!==regiaoFiltro.regiao)return;
+    regs.push({cidade:r.estacao_codigo,regiao:info.regiao||"Sem região",valor:parseFloat(r.valor)||0,dia:String(r.data).slice(0,10)});
+  });
+  const chave=modoAgrupamentoChuva==="regiao"?"regiao":"cidade";
+  const tpg={},spg={};
+  regs.forEach(r=>{const g=r[chave];tpg[g]=(tpg[g]||0)+r.valor;if(!spg[g])spg[g]={};spg[g][r.dia]=(spg[g][r.dia]||0)+r.valor;});
+  const grupos=Object.keys(tpg).sort((a,b)=>tpg[b]-tpg[a]),top=grupos.slice(0,12);
+  const vals=top.map(g=>tpg[g]),minV=vals.length?Math.min(...vals):0,maxV=vals.length?Math.max(...vals):0;
+  const tc=darkMode?"#dde1ea":"#2c2a25",sc=darkMode?"#8a90a0":"#6b6559",gc=darkMode?"#2a3040":"#e7e1d2";
+  if(graficoChuvaCidades)graficoChuvaCidades.destroy();
+  graficoChuvaCidades=new Chart(document.getElementById("grafico-chuva-cidades"),{
+    type:"bar",
+    data:{labels:top,datasets:[{label:"mm acumulados",data:top.map(g=>Math.round(tpg[g]*10)/10),backgroundColor:top.map(g=>corAzul(tpg[g],minV,maxV))}]},
+    options:{responsive:true,indexAxis:"y",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>" "+Math.round(c.parsed.x*10)/10+" mm"}}},
+      scales:{x:{ticks:{color:sc},grid:{color:gc}},y:{ticks:{color:sc},grid:{display:false}}},
+      onClick:(ev,els)=>{if(!els.length)return;modoAgrupamentoChuva==="regiao"?selecionarRegiaoFiltro(top[els[0].index]):selecionarCidadeFiltro(top[els[0].index]);}},
+  });
+  const alvo=modoAgrupamentoChuva==="regiao"?(!regiaoFiltro.todos?regiaoFiltro.regiao:top[0]):(!cidadeFiltro.todos?cidadeFiltro.cidade:top[0]);
+  document.getElementById("titulo-grafico-serie").textContent="📈 Chuva diária — "+(alvo||"sem dados");
+  renderizarBannerChuva(alvo);
+  renderizarHeatmap(regs);
+  const serie=alvo?spg[alvo]||{}:{},dias=Object.keys(serie).sort(),vd=dias.map(d=>Math.round((serie[d]||0)*10)/10);
+  const media=vd.length?Math.round((vd.reduce((a,b)=>a+b,0)/vd.length)*10)/10:0;
+  if(graficoChuvaSerie)graficoChuvaSerie.destroy();
+  graficoChuvaSerie=new Chart(document.getElementById("grafico-chuva-serie"),{
+    type:"line",
+    data:{labels:dias,datasets:[
+      {label:"mm/dia",data:vd,borderColor:gv("--laranja-forte"),backgroundColor:gv("--laranja-forte")+"33",fill:true,tension:.3,pointRadius:2,pointHoverRadius:5},
+      {label:"Média do período",data:dias.map(()=>media),borderColor:"#888",borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false}
+    ]},
+    options:{responsive:true,plugins:{legend:{position:"bottom",labels:{color:tc,boxWidth:16}},tooltip:{callbacks:{label:c=>" "+c.dataset.label+": "+c.parsed.y.toFixed(1)+" mm"}}},
+      scales:{y:{title:{display:true,text:"mm",color:sc},ticks:{color:sc},grid:{color:gc}},x:{ticks:{color:sc,maxRotation:45},grid:{color:gc}}}}
   });
 }
-function marcarCidadeTodos() {
-  cidadeFiltro.todos = true; cidadeFiltro.cidade = null;
-  renderizarPainelCidade(); atualizarGraficos();
-}
-function selecionarCidadeFiltro(cidade) {
-  cidadeFiltro.todos = false; cidadeFiltro.cidade = cidade;
-  renderizarPainelCidade(); atualizarGraficos();
-}
-function renderizarPainelRegiao() {
-  const regioes = regioesDisponiveis();
-  let html = '<div class="filtro-item todos" onclick="marcarRegiaoTodos()">' +
-    (regiaoFiltro.todos ? "●" : "○") + ' Todos</div>';
-  html += regioes.map(r => '<div class="filtro-item" onclick="selecionarRegiaoFiltro(\'' + r.replace(/'/g, "\\'") + '\')">' +
-    ((!regiaoFiltro.todos && regiaoFiltro.regiao === r) ? "●" : "○") + ' ' + r + '</div>').join("");
-  const conteudo = html || '<div class="filtro-item">Sem regiões ainda — preencha as abas "regiões RS"/"regiões SP" na planilha.</div>';
-  ["painel-regiao", "painel-regiao-chuva"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = conteudo;
-  });
-}
-function marcarRegiaoTodos() {
-  regiaoFiltro.todos = true; regiaoFiltro.regiao = null;
-  renderizarPainelRegiao(); atualizarGraficos();
-}
-function selecionarRegiaoFiltro(regiao) {
-  regiaoFiltro.todos = false; regiaoFiltro.regiao = regiao;
-  renderizarPainelRegiao(); atualizarGraficos();
-}
-function atualizarGraficos() {
-  renderizarBulletCidade();
-  renderizarGraficoSeca();
-  renderizarGraficosChuva();
-}
-function definirModoChuva(modo) {
-  modoAgrupamentoChuva = modo;
-  atualizarBotoesModo();
-  renderizarGraficosChuva();
-}
-function atualizarBotoesModo() {
-  document.getElementById("btn-modo-cidade").classList.toggle("ativo", modoAgrupamentoChuva === "cidade");
-  document.getElementById("btn-modo-regiao").classList.toggle("ativo", modoAgrupamentoChuva === "regiao");
-  document.getElementById("titulo-grafico-cidades").textContent =
-    modoAgrupamentoChuva === "regiao" ? "🌧️ Chuva acumulada por região (CEMADEN)" : "🌧️ Chuva acumulada por cidade (CEMADEN)";
-}
-function renderizarBulletCidade() {
-  const bullet = document.getElementById("bullet-cidade");
-  if (cidadeFiltro.todos || !cidadeFiltro.cidade) {
-    bullet.innerHTML = '<div class="sem-dados">Selecione uma cidade no filtro acima pra ver o status dela.</div>';
-    return;
-  }
-  const l = alertas.find(a => a.tipo === "Cheia" && a.uf === ufAtual && a.local === cidadeFiltro.cidade);
-  if (!l) {
-    bullet.innerHTML = '<div class="sem-dados">Sem dados de cheia pra essa cidade ainda.</div>';
-    return;
-  }
-  const cor = corNivelCheia(l.nivel);
-  bullet.innerHTML =
-    '<div class="card-mini" style="border-left-color:' + cor + '">' +
-    '<div class="cidade">' + l.local + '</div>' +
-    '<div class="valor">' + l.referencia + ' · ' + l.fonte + '</div>' +
-    '<div class="nivel" style="color:' + cor + '">' + l.nivel + '</div>' +
-    '</div>';
-}
-function passaFiltroData(dataStr) {
-  const ano = String(dataStr).slice(0, 4);
-  const mes = String(dataStr).slice(5, 7);
-  const okAno = anosFiltro.todos || anosFiltro.selecionados.has(ano);
-  const okMes = mesesFiltro.todos || mesesFiltro.selecionados.has(mes);
-  return okAno && okMes;
-}
-function renderizarGraficoSeca() {
-  const porMes = {};
-  dadosClimaticos.forEach(r => {
-    if (r.fonte !== "MonitorDeSecas-ANA" || r.estacao_codigo !== ufAtual) return;
-    if (!passaFiltroData(r.data)) return;
-    const mes = String(r.data).slice(0, 7);
-    const categoria = String(r.variavel).replace("seca_", "");
-    if (!porMes[mes]) porMes[mes] = { s0s4: 0, s1s4: 0, s2s4: 0, s3s4: 0, s4: 0 };
-    if (porMes[mes][categoria] !== undefined) porMes[mes][categoria] = parseFloat(r.valor) || 0;
-  });
-  const meses = Object.keys(porMes).sort();
-  const cats = ["s0s4", "s1s4", "s2s4", "s3s4", "s4"];
-  const labelsCat = { s0s4: "S0-S4", s1s4: "S1-S4", s2s4: "S2-S4", s3s4: "S3-S4", s4: "S4" };
-  const coresCat = { s0s4: getVar("--seca-s0"), s1s4: getVar("--seca-s1"), s2s4: getVar("--seca-s2"),
-    s3s4: getVar("--seca-s3"), s4: getVar("--seca-s4") };
-  const datasets = cats.map(c => ({
-    label: labelsCat[c],
-    data: meses.map(m => porMes[m][c]),
-    borderColor: coresCat[c], backgroundColor: coresCat[c] + "55", fill: true, tension: .25,
-  }));
-  if (graficoSeca) graficoSeca.destroy();
-  graficoSeca = new Chart(document.getElementById("grafico-seca"), {
-    type: "line",
-    data: { labels: meses, datasets },
-    options: {
-      responsive: true,
-      plugins: { legend: { position: "bottom" } },
-      scales: { y: { title: { display: true, text: "% da área" } } },
-    },
-  });
-}
-function rankNivelChuva(nivel) {
-  if (!nivel) return 0;
-  if (nivel.indexOf("muito grande") !== -1) return 3;
-  if (nivel.indexOf("Grande perigo") !== -1) return 2;
-  if (nivel.indexOf("Perigo") !== -1) return 1;
-  return 0;
-}
-function renderizarBannerChuva(grupoAlvo) {
-  const dot = document.getElementById("banner-chuva-dot");
-  const valor = document.getElementById("banner-chuva-valor");
-  const ref = document.getElementById("banner-chuva-ref");
-  if (!grupoAlvo) {
-    dot.style.background = getVar("--nivel-normal");
-    valor.textContent = "Sem dados ainda";
-    ref.textContent = "";
-    return;
-  }
-  const linhasCheia = alertas.filter(a => a.tipo === "Cheia" && a.uf === ufAtual);
-  let piorLinha = null;
-  if (modoAgrupamentoChuva === "regiao") {
-    linhasCheia.forEach(l => {
-      if ((l.regiao || "") !== grupoAlvo) return;
-      if (!piorLinha || rankNivelChuva(l.nivel) > rankNivelChuva(piorLinha.nivel)) piorLinha = l;
-    });
-  } else {
-    piorLinha = linhasCheia.find(l => l.local === grupoAlvo) || null;
-  }
-  if (!piorLinha) {
-    dot.style.background = getVar("--nivel-normal");
-    valor.textContent = "Sem dados de chuva pra " + grupoAlvo;
-    ref.textContent = "";
-    return;
-  }
-  const cor = corNivelCheia(piorLinha.nivel);
-  dot.style.background = cor;
-  valor.textContent = piorLinha.nivel + " — " + grupoAlvo;
-  ref.textContent = (piorLinha.referencia || "") + " · atualizado " + (piorLinha.atualizado_em || "");
-}
-function renderizarGraficosChuva() {
-  const registros = [];
-  dadosClimaticos.forEach(r => {
-    if (r.fonte !== "CEMADEN" || r.variavel !== "precipitacao_mm") return;
-    if (!passaFiltroData(r.data)) return;
-    const info = alertas.find(a => a.tipo === "Cheia" && a.local === r.estacao_codigo);
-    if (!info || info.uf !== ufAtual) return;
-    if (!cidadeFiltro.todos && r.estacao_codigo !== cidadeFiltro.cidade) return;
-    if (!regiaoFiltro.todos && (info.regiao || "") !== regiaoFiltro.regiao) return;
-    registros.push({
-      cidade: r.estacao_codigo,
-      regiao: info.regiao || "Sem região",
-      valor: parseFloat(r.valor) || 0,
-      dia: String(r.data).slice(0, 10),
-    });
-  });
-  const chaveGrupo = modoAgrupamentoChuva === "regiao" ? "regiao" : "cidade";
-  const totalPorGrupo = {};
-  const seriePorGrupo = {};
-  registros.forEach(reg => {
-    const g = reg[chaveGrupo];
-    totalPorGrupo[g] = (totalPorGrupo[g] || 0) + reg.valor;
-    if (!seriePorGrupo[g]) seriePorGrupo[g] = {};
-    seriePorGrupo[g][reg.dia] = (seriePorGrupo[g][reg.dia] || 0) + reg.valor;
-  });
-  let grupos = Object.keys(totalPorGrupo);
-  grupos.sort((a, b) => totalPorGrupo[b] - totalPorGrupo[a]);
-  const top = grupos.slice(0, 12);
-  const valoresTop = top.map(g => totalPorGrupo[g]);
-  const minV = valoresTop.length ? Math.min(...valoresTop) : 0;
-  const maxV = valoresTop.length ? Math.max(...valoresTop) : 0;
-  if (graficoChuvaCidades) graficoChuvaCidades.destroy();
-  graficoChuvaCidades = new Chart(document.getElementById("grafico-chuva-cidades"), {
-    type: "bar",
-    data: {
-      labels: top,
-      datasets: [{
-        label: "Chuva acumulada (mm)",
-        data: top.map(g => Math.round(totalPorGrupo[g] * 10) / 10),
-        backgroundColor: top.map(g => corGradienteAzul(totalPorGrupo[g], minV, maxV)),
-      }],
-    },
-    options: {
-      responsive: true, indexAxis: "y",
-      plugins: { legend: { display: false } },
-      onClick: (evt, els) => {
-        if (!els.length) return;
-        if (modoAgrupamentoChuva === "regiao") selecionarRegiaoFiltro(top[els[0].index]);
-        else selecionarCidadeFiltro(top[els[0].index]);
-      },
-    },
-  });
-  const grupoAlvo = modoAgrupamentoChuva === "regiao"
-    ? (!regiaoFiltro.todos ? regiaoFiltro.regiao : top[0])
-    : (!cidadeFiltro.todos ? cidadeFiltro.cidade : top[0]);
-  document.getElementById("titulo-grafico-serie").textContent =
-    "📈 Chuva diária — " + (grupoAlvo || "sem dados");
-  renderizarBannerChuva(grupoAlvo);
-  const serie = grupoAlvo ? seriePorGrupo[grupoAlvo] || {} : {};
-  const dias = Object.keys(serie).sort();
-  if (graficoChuvaSerie) graficoChuvaSerie.destroy();
-  graficoChuvaSerie = new Chart(document.getElementById("grafico-chuva-serie"), {
-    type: "line",
-    data: {
-      labels: dias,
-      datasets: [{
-        label: "mm",
-        data: dias.map(d => Math.round(serie[d] * 10) / 10),
-        borderColor: getVar("--laranja-forte"), backgroundColor: getVar("--laranja-forte") + "33",
-        fill: true, tension: .3,
-      }],
-    },
-    options: { responsive: true, plugins: { legend: { display: false } } },
-  });
-}
-function toggleOds(id) {
-  const aba = document.getElementById(id);
-  const aberta = aba.classList.contains("aberta");
-  document.querySelectorAll(".ods-aba").forEach(el => el.classList.remove("aberta"));
-  if (!aberta) aba.classList.add("aberta");
-}
-(async function init() {
+
+(async function init(){
   await carregarDados();
-  const hash = location.hash.replace("#", "");
-  if (hash.indexOf("painel/") === 0) {
-    abrirPainel(hash.split("/")[1] || "RS");
-  }
+  const h=location.hash.replace("#","");
+  if(h.indexOf("painel/")===0)abrirPainel(h.split("/")[1]||"RS");
 })();
 </script>
 </body>
