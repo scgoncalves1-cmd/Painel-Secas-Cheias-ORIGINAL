@@ -161,7 +161,7 @@
   .filtro-segmento{ position:relative; flex:1; }
   .filtro-segmento-grande{ flex:2; }
   .filtro-btn{
-    width:100%; background:var(--laranja-forte); color:#fff; border:none;
+    width:100%; background:var(--laranja-medio); color:#fff; border:none;
     padding:16px 20px; font-size:.85rem; font-weight:800; letter-spacing:1px;
     text-transform:uppercase; text-align:center; cursor:pointer;
   }
@@ -216,7 +216,7 @@
   .secao-painel-titulo{
     font-size:1.05rem; font-weight:800; margin:0 0 18px; text-transform:uppercase; letter-spacing:.5px;
   }
-  .secao-seca .secao-painel-titulo{ color:var(--laranja-forte); }
+  .secao-seca .secao-painel-titulo{ color:var(--laranja-medio); }
   .secao-chuva .secao-painel-titulo{ color:var(--azul-marinho); }
 
   .aviso-config{
@@ -238,15 +238,15 @@
 <!-- ============ CAPA ============ -->
 <div id="view-capa">
   <div class="hero">
-    <div class="badge-pesquisa">Pesquisa de Mestrado · PPGCS · UCS</div>
-    <h1>Entre a <span class="accent">Seca</span> e a <span class="accent">Cheia</span></h1>
+    <div class="badge-pesquisa">Pesquisa de Mestrado · PPGCidades · UCS</div>
+    <h1>Entre  <span class="accent">Secas</span> e <span class="accent">Cheias</span></h1>
     <div class="tags-ods">
       <img src="ods11.png" alt="ODS 11 - Cidades e Comunidades Sustentáveis">
       <img src="ods13.png" alt="ODS 13 - Ação Contra a Mudança Global do Clima">
       <img src="ods3.png" alt="ODS 3 - Saúde e Bem-Estar">
     </div>
     <div class="rodape-academico">
-      <span>🎓 PPGCS · UCS</span>
+      <span>🎓 PPGCidades · UCS</span>
       <span>👤 Stéfani Capriolli Gonçalves</span>
     </div>
   </div>
@@ -276,7 +276,7 @@
 
 <!-- ============ PAINEL (drill-down) ============ -->
 <div id="view-painel" class="painel-wrap">
-  <div class="breadcrumb" onclick="mostrarCapa()">← Voltar para a Capa</div>
+  <div class="breadcrumb" onclick="mostrarCapa()">← Voltar</div>
   <div class="painel-header">
     <h2 id="painel-titulo">Painel — RS</h2>
     <div class="atualizado" id="painel-atualizado"></div>
@@ -385,7 +385,7 @@
 
     <div class="graficos">
       <div class="grafico-card">
-        <h3 id="titulo-grafico-cidades">🌧️ Chuva acumulada por cidade (CEMADEN)</h3>
+        <h3 id="titulo-grafico-cidades">🌧️ Chuva acumulada por cidade</h3>
         <canvas id="grafico-chuva-cidades"></canvas>
       </div>
       <div class="grafico-card">
