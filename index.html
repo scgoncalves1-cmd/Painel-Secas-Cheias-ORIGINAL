@@ -79,13 +79,8 @@
   .hero p.subtitulo{
     max-width:640px; margin:0 auto 26px; color:#e6e2d4; font-size:1rem; line-height:1.5;
   }
-  .tags-ods{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:26px; }
-  .tag-ods{
-    padding:7px 16px; border-radius:999px; font-size:.78rem; font-weight:700; color:#fff;
-  }
-  .tag-ods.ods11{ background:var(--laranja-forte); }
-  .tag-ods.ods13{ background:var(--ods-verde); }
-  .tag-ods.ods3{ background:var(--ods-teal); }
+  .tags-ods{ display:flex; justify-content:center; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:26px; }
+  .tags-ods img{ height:64px; width:64px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,.25); }
   .rodape-academico{
     display:flex; justify-content:center; gap:22px; flex-wrap:wrap;
     font-size:.78rem; color:#cfd0c2; border-top:1px solid rgba(255,255,255,.18);
@@ -105,16 +100,13 @@
     position:relative; overflow:hidden; min-height:280px;
     display:flex; flex-direction:column; justify-content:space-between;
     transition:transform .15s, box-shadow .15s;
+    background:linear-gradient(160deg, var(--verde-medio) 0%, var(--marrom-medio) 100%);
   }
   .card-estado:hover{ transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.22); }
-  .card-estado.rs{ background:linear-gradient(160deg,#3c5c34,#233d1c); }
-  .card-estado.sp{ background:linear-gradient(160deg,#4a3524,#2b1d13); }
 
-  .card-estado .forma-svg{ align-self:center; margin:6px 0 10px; filter:drop-shadow(0 6px 10px rgba(0,0,0,.35)); }
-  .card-estado .rotulo-uf{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-58%);
-    font-size:2.6rem; font-weight:800; color:#fff; text-shadow:0 3px 10px rgba(0,0,0,.4);
-    pointer-events:none;
+  .card-estado .forma-svg{
+    align-self:center; margin:6px 0 10px; max-width:170px; max-height:150px; object-fit:contain;
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));
   }
   .card-estado .titulo-estado{ font-size:1.05rem; font-weight:700; }
   .card-estado .desc-estado{ font-size:.82rem; color:#e4e0d2; margin-top:4px; }
@@ -124,9 +116,14 @@
   .painel-wrap{ display:none; max-width:1150px; margin:0 auto; padding:26px 20px 70px; }
   .painel-wrap.ativo{ display:block; }
   .breadcrumb{ font-size:.85rem; color:var(--texto-suave); margin-bottom:6px; cursor:pointer; }
-  .painel-header{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:18px; }
+  .painel-header{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
   .painel-header h2{ margin:0; font-size:1.7rem; }
   .painel-header .atualizado{ font-size:.8rem; color:var(--texto-suave); }
+
+  .nota-fonte{
+    font-size:.76rem; color:var(--texto-suave); background:#eee8d9; border-radius:8px;
+    padding:8px 14px; margin-bottom:20px; display:inline-block;
+  }
 
   .banner-seca{
     border-radius:14px; padding:18px 22px; color:#fff; margin-bottom:22px;
@@ -218,9 +215,9 @@
       monitoramento de alertas nos estados do Rio Grande do Sul e São Paulo.
     </p>
     <div class="tags-ods">
-      <span class="tag-ods ods11">ODS 11 · Cidades Sustentáveis</span>
-      <span class="tag-ods ods13">ODS 13 · Ação Climática</span>
-      <span class="tag-ods ods3">ODS 3 · Saúde e Bem-Estar</span>
+      <img src="ods11.png" alt="ODS 11 - Cidades e Comunidades Sustentáveis">
+      <img src="ods13.png" alt="ODS 13 - Ação Contra a Mudança Global do Clima">
+      <img src="ods3.png" alt="ODS 3 - Saúde e Bem-Estar">
     </div>
     <div class="rodape-academico">
       <span>🎓 PPGCS · UCS</span>
@@ -235,13 +232,7 @@
     <p>Dois estados brasileiros monitorados com perfis distintos de eventos climáticos extremos</p>
     <div class="cards-estados">
       <div class="card-estado rs" onclick="abrirPainel('RS')">
-        <svg class="forma-svg" width="150" height="150" viewBox="0 0 200 200">
-          <polygon points="30,150 20,100 55,55 100,25 150,35 175,80 165,130 120,175 70,180" fill="#c62828"/>
-          <polygon points="30,150 20,100 55,55 100,60 95,140 70,180" fill="#f1c232"/>
-          <polygon points="100,25 150,35 175,80 165,130 120,175 95,140 100,60" fill="#2e7d32"/>
-          <polygon points="30,150 20,100 55,55 100,25 150,35 175,80 165,130 120,175 70,180" fill="none" stroke="#fff" stroke-width="3"/>
-        </svg>
-        <div class="rotulo-uf">RS</div>
+        <img class="forma-svg" src="rs.png" alt="Mapa do Rio Grande do Sul">
         <div>
           <div class="titulo-estado">Rio Grande do Sul</div>
           <div class="desc-estado">Ciclos intensos de cheias fluviais e estiagens prolongadas</div>
@@ -250,13 +241,7 @@
       </div>
 
       <div class="card-estado sp" onclick="abrirPainel('SP')">
-        <svg class="forma-svg" width="150" height="150" viewBox="0 0 200 200">
-          <polygon points="25,90 60,40 120,30 175,60 180,110 140,160 80,175 35,140" fill="#3a2a1c"/>
-          <polygon points="25,90 60,40 120,30 130,90 90,140 35,140" fill="#e9e4d8"/>
-          <polygon points="120,30 175,60 180,110 140,160 130,90" fill="#8b0000"/>
-          <polygon points="25,90 60,40 120,30 175,60 180,110 140,160 80,175 35,140" fill="none" stroke="#fff" stroke-width="3"/>
-        </svg>
-        <div class="rotulo-uf">SP</div>
+        <img class="forma-svg" src="sp.png" alt="Mapa de São Paulo">
         <div>
           <div class="titulo-estado">São Paulo</div>
           <div class="desc-estado">Chuvas intensas urbanas e estresse hídrico sazonal</div>
@@ -273,6 +258,10 @@
   <div class="painel-header">
     <h2 id="painel-titulo">Painel — RS</h2>
     <div class="atualizado" id="painel-atualizado"></div>
+  </div>
+
+  <div class="nota-fonte">
+    📌 Fonte dos dados: CEMADEN (chuva e alertas de cheia) e Monitor de Secas — ANA (níveis de seca), coletados automaticamente e atualizados periodicamente.
   </div>
 
   <div id="painel-config-aviso"></div>
