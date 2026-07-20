@@ -73,27 +73,19 @@
     margin-bottom:22px; color:#f0ead9;
   }
 
-  /* ===== LOGO DO PROJETO ===== */
-  .logo-projeto{
-    display:block;
-    margin:0 auto 24px;
-    /* Ajuste width e height conforme o tamanho do seu logo */
-    width:160px;
-    height:auto;
-    /* Sombra suave pra destacar sobre o fundo escuro */
-    filter:drop-shadow(0 4px 12px rgba(0,0,0,.35));
-  }
-  /* Se o logo tiver fundo branco e você quiser removê-lo, descomente a linha abaixo: */
-  /* .logo-projeto{ mix-blend-mode:screen; } */
-
   .hero h1{ font-size:2.4rem; margin:0 0 22px; font-weight:800; }
   .hero h1 .accent{ color:var(--laranja); }
   .tags-ods{ display:flex; justify-content:center; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:26px; }
   .tags-ods img{ height:96px; width:96px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,.25); }
   .rodape-academico{
-    display:flex; justify-content:center; gap:22px; flex-wrap:wrap;
+    display:flex; justify-content:center; align-items:center; gap:22px; flex-wrap:wrap;
     font-size:.78rem; color:#cfd0c2; border-top:1px solid rgba(255,255,255,.18);
     padding-top:16px; margin-top:8px;
+  }
+  .logo-projeto-footer{
+    height:48px; width:auto;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));
+    opacity:.9;
   }
   /* ===== Áreas de estudo ===== */
   .secao-areas{ padding:48px 24px 64px; max-width:1100px; margin:0 auto; }
@@ -231,14 +223,6 @@
   <div class="hero">
     <div class="badge-pesquisa">Pesquisa de Mestrado · PPGCidades · UCS</div>
 
-    <!-- =====================================================
-         LOGO DO PROJETO
-         Substitua "logo-projeto.png" pelo nome do seu arquivo
-         de logo (coloque-o na mesma pasta que este HTML).
-         Ajuste o width em .logo-projeto no CSS conforme necessário.
-         ===================================================== -->
-    <img src="logo-projeto.png" alt="Logo do projeto Entre Secas e Cheias" class="logo-projeto">
-
     <h1>Entre  <span class="accent">Secas</span> e <span class="accent">Cheias</span></h1>
     <div class="tags-ods">
       <img src="ods11.png" alt="ODS 11 - Cidades e Comunidades Sustentáveis">
@@ -246,6 +230,9 @@
       <img src="ods3.png" alt="ODS 3 - Saúde e Bem-Estar">
     </div>
     <div class="rodape-academico">
+      <!-- Substitua pela URL da sua imagem no GitHub, ex:
+           https://raw.githubusercontent.com/seu-usuario/seu-repo/main/logo.png -->
+      <img src="logo-projeto.png" alt="Logo do projeto" class="logo-projeto-footer">
       <span>🎓 PPGCidades · UCS</span>
       <span>👤 Stéfani Capriolli Gonçalves</span>
     </div>
